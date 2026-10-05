@@ -6,30 +6,7 @@
 <br>
 Un thème pour [Equicord](https://github.com/Equicord/Equicord) et [Vencord](https://vencord.dev).
 
-<br>
-
-<img src="docs/screenshots/chat.png" alt="Applecord : barre latérale en verre flottante, chat sur fond noir système, zone de saisie en verre" width="100%">
-
 </div>
-
-<br>
-
-## Aperçu
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/menu.png" alt="Menu contextuel et sous-menu en verre dépoli, coche de sélection"></td>
-    <td width="50%"><img src="docs/screenshots/settings.png" alt="Paramètres dans une fenêtre de verre flottante, boutons en capsule, interrupteurs verts"></td>
-  </tr>
-  <tr>
-    <td><b>Menus en verre dépoli.</b> Les couleurs passent à travers, la sélection est une coche ✓, l'élément survolé prend la teinte système.</td>
-    <td><b>Paramètres en fenêtre flottante.</b> Boutons en capsule, interrupteurs verts, Discord flouté derrière.</td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/profile.png" alt="Carte de profil en verre avec sections groupées"></td>
-    <td valign="top"><br><b>Cartes de profil en verre</b>, sections groupées comme une liste iOS, coins concentriques.<br><br><sub>Toutes les captures utilisent des données fictives : elles sont générées à partir de <a href="docs/preview"><code>docs/preview</code></a>, une copie de la structure de Discord sans aucun compte réel.</sub></td>
-  </tr>
-</table>
 
 ## Ce que fait le thème
 
@@ -94,7 +71,6 @@ Le thème suit les réglages du système et de Discord :
 ```bash
 npm run dev     # recompile dist/ à chaque modification de src/
 npm run build   # build unique
-npm run shots   # build + captures du README (Chrome headless, données fictives)
 ```
 
 - **Aperçu sans client modifié** : colle [`dist/inject.js`](dist/inject.js) dans la console DevTools de discord.com.
@@ -111,7 +87,7 @@ npm run shots   # build + captures du README (Chrome headless, données fictives
 | `src/50-motion.css` | Retour à l'appui, apparition des menus |
 | `src/90-accessibility.css` | Mouvements réduits, transparence réduite, contraste élevé |
 | `build.mjs` | Assemble `src/`, génère les ressorts, développe les `@custom-selector` |
-| `docs/preview/` | Faux Discord aux données fictives, source des captures |
+| `dev/audit.js` | Liste les surfaces opaques restantes dans les fenêtres ouvertes |
 
 Les sélecteurs visent le début des noms de classes (`[class^="sidebar_"]`) et la structure du DOM, jamais les hashes (`sidebar__5e434`) : le thème survit aux mises à jour de Discord tant que les composants gardent leur nom.
 
