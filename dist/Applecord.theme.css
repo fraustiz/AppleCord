@@ -455,11 +455,16 @@ section[class^="panels_"]::before {
   pointer-events: none;
 }
 
-/* The account row carries the nameplate video, which runs a pixel past the
-   panel; clip it to the panel's bottom corners. The panel itself can't
-   clip: the quest card expands above it. */
+/* The account row carries the nameplate, which runs a pixel past the panel;
+   clip it to the panel's corners — all four when the row is alone, only the
+   bottom two when the quest bar sits above it. The panel itself can't clip:
+   the quest card expands above it. */
 section[class^="panels_"] > [class^="container_"]:last-child {
   overflow: hidden;
+  border-radius: var(--ac-radius-plate);
+}
+
+section[class^="panels_"]:has(> [class^="mask_"] [class*="wrapperVisible_"]) > [class^="container_"]:last-child {
   border-radius: 0 0 var(--ac-radius-plate) var(--ac-radius-plate);
 }
 
