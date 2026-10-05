@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+# Local tooling, not part of the theme
+.agents/
+.claude/
+skills-lock.json

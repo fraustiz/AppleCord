@@ -1,0 +1,33 @@
+/*
+ * Base: a plain system background, like any Apple app. The content layer
+ * sits directly on it; only the navigation layer is glass.
+ */
+
+#app-mount {
+  background: var(--ac-bg);
+}
+
+/* Text rendering — SF, with display tracking on large headings. */
+body {
+  font-family: var(--ac-font);
+  -webkit-font-smoothing: antialiased;
+  font-optical-sizing: auto;
+}
+
+:is([class*="heading-xxl/"], [class*="heading-xl/"], [class*="heading-lg/"]) {
+  font-family: var(--ac-font-display);
+  letter-spacing: var(--ac-tracking-display);
+}
+
+:is([class*="heading-md/"], [class*="heading-sm/"]) {
+  letter-spacing: var(--ac-tracking-title);
+}
+
+:is([class*="text-xxs/"], [class*="text-xs/"]) {
+  letter-spacing: var(--ac-tracking-caption);
+}
+
+/* Overlay scrollbars, like macOS */
+::-webkit-scrollbar-thumb {
+  border-radius: var(--ac-radius-pill);
+}

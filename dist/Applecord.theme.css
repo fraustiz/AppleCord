@@ -1,0 +1,1241 @@
+/**
+ * @name Applecord
+ * @author Jules
+ * @description Discord en Liquid Glass, façon iOS 27. Matériaux translucides, ressorts Apple, typographie SF.
+ * @version 0.1.0
+ */
+
+/* ── springs (generated) ─────────────────────────────────────────────── */
+:root {
+  --ac-spring-smooth: linear(0, 0.0166, 0.0586, 0.1165, 0.1833, 0.2541, 0.3254, 0.3948, 0.4607, 0.5222, 0.5788, 0.6304, 0.6769, 0.7184, 0.7554, 0.7881, 0.8169, 0.8421, 0.8642, 0.8834, 0.9, 0.9144, 0.9268, 0.9375, 0.9468, 0.9547, 0.9614, 0.9672, 0.9722, 0.9764, 0.98, 0.9831, 0.9857, 0.9879, 0.9898, 0.9914, 0.9927, 0.9939, 0.9948, 0.9956, 0.9963, 0.9969, 0.9974, 0.9978, 0.9982, 0.9985, 0.9987, 0.9989, 1);
+  --ac-spring-smooth-duration: 520ms;
+  --ac-spring-bouncy: linear(0, 0.0142, 0.0517, 0.1056, 0.1705, 0.242, 0.3164, 0.391, 0.4638, 0.5332, 0.5982, 0.6581, 0.7125, 0.7613, 0.8045, 0.8424, 0.8753, 0.9034, 0.9273, 0.9472, 0.9637, 0.977, 0.9878, 0.9962, 1.0026, 1.0074, 1.0108, 1.0131, 1.0144, 1.0151, 1.0151, 1.0148, 1.0141, 1.0132, 1.0122, 1.0111, 1.0099, 1.0088, 1.0077, 1.0067, 1.0057, 1.0049, 1.0041, 1.0034, 1.0027, 1.0022, 1.0017, 1.0013, 1);
+  --ac-spring-bouncy-duration: 540ms;
+}
+
+/* ── 00-tokens.css ───────────────────────────────────────────────────── */
+/*
+ * Applecord design tokens.
+ * Everything a user may want to tweak lives here, under --ac-*.
+ *
+ * Like an Apple app: content sits on a plain system background, and Liquid
+ * Glass is reserved for the navigation layer that floats above it (sidebar,
+ * toolbar controls, composer). No decorative wallpaper.
+ */
+
+:root {
+  /* System backgrounds (iOS, dark appearance) */
+  --ac-bg: #000000;           /* systemBackground — content layer */
+  --ac-bg-secondary: #1c1c1e; /* secondarySystemBackground */
+  --ac-bg-tertiary: #2c2c2e;  /* tertiarySystemBackground */
+
+  /* System fills — controls, chips, search fields, hover states */
+  --ac-fill: rgba(120, 120, 128, 0.36);
+  --ac-fill-secondary: rgba(120, 120, 128, 0.32);
+  --ac-fill-tertiary: rgba(118, 118, 128, 0.24);
+  --ac-fill-quaternary: rgba(116, 116, 128, 0.18);
+
+  /* Labels */
+  --ac-label: #ffffff;
+  --ac-label-secondary: rgba(235, 235, 245, 0.6);
+  --ac-label-tertiary: rgba(235, 235, 245, 0.3);
+  --ac-label-quaternary: rgba(235, 235, 245, 0.18);
+
+  /* Separators */
+  --ac-separator: rgba(84, 84, 88, 0.6);
+  --ac-separator-soft: rgba(84, 84, 88, 0.34);
+
+  /* Tint — iOS system blue, plus the semantic system colors */
+  --ac-accent: #0a84ff;
+  --ac-accent-hover: #409cff;
+  --ac-on-accent: #ffffff;
+  --ac-green: #30d158;
+  --ac-red: #ff453a;
+  --ac-orange: #ff9f0a;
+  --ac-yellow: #ffd60a;
+
+  /* Liquid Glass. Weight encodes hierarchy: the sidebar is a structural,
+     heavier pane; controls are lighter. Never stack light glass on light. */
+  --ac-glass-blur: 30px;
+  --ac-glass-saturate: 180%;
+  --ac-glass-sidebar: rgba(36, 36, 40, 0.62);
+  --ac-glass-plate: rgba(58, 58, 62, 0.55);    /* user panel, composer */
+  --ac-glass-popover: rgba(40, 40, 44, 0.72);  /* menus, popouts, modals */
+  /* Menus: frosted Liquid Glass. A white veil lifts what's behind instead
+     of darkening it, and the backdrop is dimmed first (brightness) so a
+     bright image behind can't wash out the white labels — a CSS stand-in
+     for Apple's luminosity clamping. */
+  --ac-glass-menu: rgba(255, 255, 255, 0.12);
+  --ac-glass-menu-blur: 20px;
+  --ac-glass-menu-dim: 0.6;
+  --ac-glass-sheet: rgba(22, 22, 24, 0.72);    /* full-screen layers */
+  --ac-scrim: rgba(0, 0, 0, 0.32);
+  --ac-glass-control: rgba(255, 255, 255, 0.08);
+  --ac-glass-control-hover: rgba(255, 255, 255, 0.13);
+  --ac-glass-control-active: rgba(255, 255, 255, 0.18);
+
+  /* The rim: light catches the top edge of the glass. */
+  --ac-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --ac-specular-strong: inset 0 1px 0 0 rgba(255, 255, 255, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+
+  /* Shadows — bigger surfaces read as thicker. */
+  --ac-shadow-pane: 0 10px 30px -6px rgba(0, 0, 0, 0.55);
+  --ac-shadow-float: 0 16px 48px -8px rgba(0, 0, 0, 0.7), 0 2px 10px -2px rgba(0, 0, 0, 0.4);
+  --ac-shadow-control: 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+
+  /* Geometry. Corners are concentric: outer radius = inner radius + inset. */
+  --ac-inset: 8px;
+  --ac-radius-pane: 24px;
+  --ac-radius-plate: calc(var(--ac-radius-pane) - var(--ac-inset));
+  --ac-radius-popover: 20px;
+  --ac-radius-card: 14px;
+  --ac-radius-control: 10px;
+  --ac-radius-pill: 999px;
+
+  /* Typography — the system font ships optical sizing and tracking tables. */
+  --ac-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", sans-serif;
+  --ac-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", system-ui, sans-serif;
+  --ac-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+  --ac-tracking-display: -0.022em;
+  --ac-tracking-title: -0.012em;
+  --ac-tracking-caption: 0.01em;
+
+  /* Motion */
+  --ac-press-scale: 0.96;
+
+  /* Checkmark for selected menu items (SF Symbols' "checkmark" weight). */
+  --ac-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+
+  /* Home button glyph (replaces the Discord logo). Any single-color SVG
+     works: it's used as a mask, so it takes the button's color. */
+  --ac-home-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701'/%3E%3C/svg%3E");
+}
+
+/* ── 10-palette.css ──────────────────────────────────────────────────── */
+/*
+ * Discord's design tokens, remapped to Liquid Glass.
+ *
+ * Discord defines its variables on .theme-dark/.theme-darker/.theme-midnight,
+ * both on <html> and on nested layers. Prefixing with :root bumps specificity
+ * to (0,2,0) so we win over lazy-loaded chunks without !important.
+ */
+
+:root:is(.theme-dark, .theme-darker, .theme-midnight),
+:root :is(.theme-dark, .theme-darker, .theme-midnight) {
+  /* Fonts */
+  --font-primary: var(--ac-font);
+  --font-display: var(--ac-font-display);
+  --font-headline: var(--ac-font-display);
+  --font-code: var(--ac-font-mono);
+  --font-display-marketing: var(--ac-font-display);
+  --font-display-marketing-header: var(--ac-font-display);
+
+  /* Surfaces — solid system backgrounds by default. Glass is applied
+     explicitly, with its blur, by the layout and component modules, so
+     nothing ever ends up translucent without a backdrop blur. */
+  --app-frame-background: var(--ac-bg);
+  --app-frame-border: transparent;
+  --background-base-lowest: var(--ac-bg);
+  --background-base-lower: var(--ac-bg);
+  --background-base-low: var(--ac-bg);
+  --chat-background: var(--ac-bg);
+  --chat-background-default: var(--ac-bg);
+  --chat-border: var(--ac-separator-soft);
+  --background-secondary-alt: var(--ac-bg-secondary);
+
+  --background-surface-high: var(--ac-bg-secondary);
+  --background-surface-higher: var(--ac-bg-tertiary);
+  --background-surface-highest: #3a3a3c;
+  --bg-surface-raised: var(--ac-bg-secondary);
+  --modal-background: var(--ac-bg-secondary);
+  --modal-footer-background: var(--ac-bg-secondary);
+  --card-background-default: var(--ac-fill-quaternary);
+  --card-secondary-bg: var(--ac-fill-quaternary);
+  --card-border-default: var(--ac-separator-soft);
+  --background-scrim: rgba(0, 0, 0, 0.5);
+
+  /* Overlays for hover / selected states */
+  --background-mod-subtle: var(--ac-fill-quaternary);
+  --background-mod-normal: var(--ac-fill-tertiary);
+  --background-mod-strong: var(--ac-fill-secondary);
+  --background-mod-muted: rgba(116, 116, 128, 0.1);
+  --interactive-background-hover: var(--ac-fill-quaternary);
+  --interactive-background-active: var(--ac-fill-tertiary);
+  --interactive-background-selected: var(--ac-fill-tertiary);
+  --message-background-hover: rgba(116, 116, 128, 0.1);
+
+  /* Inputs: borderless fills, tint ring on focus */
+  --input-background-default: var(--ac-fill-tertiary);
+  --input-border-default: transparent;
+  --input-border-hover: transparent;
+  --input-border-active: var(--ac-accent);
+  --channeltextarea-background: transparent;
+
+  /* Labels */
+  --text-strong: var(--ac-label);
+  --text-default: var(--ac-label);
+  --text-subtle: var(--ac-label-secondary);
+  --text-muted: var(--ac-label-tertiary);
+  --chat-text-muted: var(--ac-label-tertiary);
+  --channels-default: var(--ac-label-secondary);
+  --text-link: var(--ac-accent-hover);
+  --text-brand: var(--ac-accent-hover);
+
+  --interactive-text-default: var(--ac-label-secondary);
+  --interactive-text-hover: var(--ac-label);
+  --interactive-text-active: var(--ac-label);
+  --interactive-icon-default: var(--ac-label-secondary);
+  --interactive-icon-hover: var(--ac-label);
+  --interactive-icon-active: var(--ac-label);
+  --interactive-muted: var(--ac-label-quaternary);
+
+  --icon-strong: var(--ac-label);
+  --icon-default: var(--ac-label-secondary);
+  --icon-subtle: var(--ac-label-tertiary);
+  --icon-muted: var(--ac-label-quaternary);
+  --icon-brand: var(--ac-accent);
+  --icon-link: var(--ac-accent-hover);
+
+  /* Brand → iOS accent. The primitives first, so every semantic token
+     derived from blurple follows. */
+  --brand-260: #8ec5ff;
+  --brand-300: #7ab8ff;
+  --brand-330: #64acff;
+  --brand-345: #58a6ff;
+  --brand-360: #4ca0ff;
+  --brand-400: #409cff;
+  --brand-430: #2e93ff;
+  --brand-460: #1a8bff;
+  --brand-500: var(--ac-accent);
+  --brand-530: #087be8;
+  --brand-560: #0771d6;
+  --brand-600: #0667c4;
+  --background-brand: var(--ac-accent);
+  --background-accent: var(--ac-accent);
+  --control-brand-foreground: var(--ac-accent-hover);
+  --control-brand-foreground-new: var(--ac-accent-hover);
+  --control-primary-background-default: var(--ac-accent);
+  --control-primary-background-hover: var(--ac-accent-hover);
+  --control-primary-background-active: var(--ac-accent);
+  --control-primary-border-default: transparent;
+  --control-primary-border-hover: transparent;
+  --control-primary-border-active: transparent;
+  --control-primary-text-default: var(--ac-on-accent);
+  --control-primary-text-hover: var(--ac-on-accent);
+  --control-primary-text-active: var(--ac-on-accent);
+  --control-secondary-background-default: var(--ac-fill-tertiary);
+  --control-secondary-background-hover: var(--ac-fill-secondary);
+  --control-secondary-background-active: var(--ac-fill);
+  /* Secondary buttons follow SwiftUI's .bordered style: gray fill, label in
+     the tint color. Filled tint is reserved for the primary action. */
+  --control-secondary-text-default: var(--ac-accent-hover);
+  --control-secondary-text-hover: var(--ac-accent-hover);
+  --control-secondary-text-active: var(--ac-accent-hover);
+  --control-secondary-border-default: transparent;
+  --control-secondary-border-hover: transparent;
+  --control-secondary-border-active: transparent;
+  --interactive-accent-background-default: var(--ac-accent);
+  --interactive-accent-background-hover: var(--ac-accent-hover);
+  --interactive-accent-background-active: var(--ac-accent);
+  --interactive-accent-background-selected: var(--ac-accent);
+
+  /* Selection controls: tint for radios and checkboxes, green for switches */
+  --radio-background-selected-default: var(--ac-accent);
+  --radio-background-selected-hover: var(--ac-accent-hover);
+  --radio-border-selected-default: var(--ac-accent);
+  --radio-border-selected-hover: var(--ac-accent-hover);
+  --radio-thumb-background-active: var(--ac-on-accent);
+  --checkbox-background-selected-default: var(--ac-accent);
+  --checkbox-background-selected-hover: var(--ac-accent-hover);
+  --checkbox-border-selected-default: var(--ac-accent);
+  --checkbox-border-selected-hover: var(--ac-accent-hover);
+  --checkbox-icon-active: var(--ac-on-accent);
+  --switch-background-default: var(--ac-fill);
+  --switch-background-hover: var(--ac-fill);
+  --switch-border-default: transparent;
+  --switch-border-hover: transparent;
+  --switch-background-selected-default: var(--ac-green);
+  --switch-background-selected-hover: var(--ac-green);
+  --switch-border-selected-default: transparent;
+  --switch-border-selected-hover: transparent;
+  --switch-thumb-background-default: #ffffff;
+  --switch-thumb-background-selected-default: #ffffff;
+  --togglebutton-background-selected: var(--ac-accent);
+  --togglebutton-background-selected-hover: var(--ac-accent-hover);
+  --togglebutton-background-selected-active: var(--ac-accent);
+  --togglebutton-border-selected: transparent;
+
+  /* Separators */
+  --border-muted: rgba(84, 84, 88, 0.2);
+  --border-subtle: var(--ac-separator-soft);
+  --border-normal: var(--ac-separator);
+  --border-strong: rgba(120, 120, 128, 0.7);
+  --border-focus: var(--ac-accent);
+
+  /* Status */
+  --status-online: var(--ac-green);
+  --status-positive: var(--ac-green);
+  --status-danger: var(--ac-red);
+  --status-warning: var(--ac-orange);
+  --text-feedback-positive: var(--ac-green);
+  --text-feedback-critical: var(--ac-red);
+  --text-feedback-warning: var(--ac-orange);
+  --text-feedback-info: var(--ac-accent-hover);
+  --icon-status-online: var(--ac-green);
+  --icon-status-dnd: var(--ac-red);
+  --icon-status-idle: var(--ac-yellow);
+
+  /* Mentions */
+  --mention-background: rgba(10, 132, 255, 0.22);
+  --mention-foreground: #8ec5ff;
+  --message-mentioned-background-default: rgba(255, 214, 10, 0.08);
+  --message-mentioned-background-hover: rgba(255, 214, 10, 0.12);
+  --message-highlight-background-default: rgba(10, 132, 255, 0.1);
+  --message-highlight-background-hover: rgba(10, 132, 255, 0.14);
+
+  /* Scrollbars — overlay style, like macOS */
+  --scrollbar-auto-thumb: var(--ac-fill);
+  --scrollbar-auto-track: transparent;
+  --scrollbar-thin-thumb: var(--ac-fill);
+  --scrollbar-thin-track: transparent;
+  --scrollbar-auto-scrollbar-color-thumb: var(--ac-fill);
+  --scrollbar-auto-scrollbar-color-track: transparent;
+
+  /* Radii — rounder, concentric */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-xxl: 28px;
+  --button-border-radius: var(--ac-radius-pill);
+  --button-border-radius-lg: var(--ac-radius-pill);
+}
+
+/* ── 20-base.css ─────────────────────────────────────────────────────── */
+/*
+ * Base: a plain system background, like any Apple app. The content layer
+ * sits directly on it; only the navigation layer is glass.
+ */
+
+#app-mount {
+  background: var(--ac-bg);
+}
+
+/* Text rendering — SF, with display tracking on large headings. */
+body {
+  font-family: var(--ac-font);
+  -webkit-font-smoothing: antialiased;
+  font-optical-sizing: auto;
+}
+
+:is([class*="heading-xxl/"], [class*="heading-xl/"], [class*="heading-lg/"]) {
+  font-family: var(--ac-font-display);
+  letter-spacing: var(--ac-tracking-display);
+}
+
+:is([class*="heading-md/"], [class*="heading-sm/"]) {
+  letter-spacing: var(--ac-tracking-title);
+}
+
+:is([class*="text-xxs/"], [class*="text-xs/"]) {
+  letter-spacing: var(--ac-tracking-caption);
+}
+
+/* Overlay scrollbars, like macOS */
+::-webkit-scrollbar-thumb {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* ── 30-layout.css ───────────────────────────────────────────────────── */
+/*
+ * Layout, the way an Apple app is built:
+ *
+ *   content layer   → chat, members, pages: full-bleed on the system background
+ *   navigation layer→ Liquid Glass floating above it
+ *       sidebar       one glass pane, inset from the window, holding the
+ *                     server rail and the channel list (macOS Tahoe sidebar)
+ *       user panel    a glass plate inside the sidebar, concentric corners
+ *       composer      a floating glass plate the messages scroll beneath
+ *
+ * Selectors match class-name prefixes, scoped by structure, so they survive
+ * Discord's hash changes as long as the component names stay.
+ */
+
+[class^="base_"] > [class^="bar_"] {
+  background: transparent;
+}
+
+/* ── Sidebar pane ────────────────────────────────────────────────────── */
+
+/* No backdrop-filter here: the only thing behind the pane is the plain
+   system background, so a blur would change nothing on screen — and a
+   blurred layer holding the user panel's videos flickers in Chromium. */
+[class^="base_"] > [class^="content_"] > [class^="sidebar_"] {
+  margin: 0 0 var(--ac-inset) var(--ac-inset);
+  border-radius: var(--ac-radius-pane);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--ac-glass-sidebar);
+  box-shadow: var(--ac-specular), var(--ac-shadow-pane);
+}
+
+/* Everything inside the pane is clear: one material, not glass on glass. */
+[class^="sidebar_"] > nav[class*="guilds_"],
+[class^="sidebar_"] > [class^="sidebarList_"],
+[class^="sidebarList_"] > nav,
+nav[class^="privateChannels_"] [class^="scroller_"] {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+[class^="sidebarList_"] header {
+  background: transparent;
+}
+
+/* Hairline between the server rail and the channel list. Drawn on the rail's
+   right edge: the server banner at the top of the list would cover it. */
+[class^="sidebar_"] > nav[class*="guilds_"] {
+  box-shadow: inset -1px 0 0 0 var(--ac-separator-soft);
+}
+
+/* The rail starts flush with the pane's top edge, so the first icon was
+   clipped by the rounded corner. Give it the same 16px above as it has on
+   each side ((72px rail − 40px icon) / 2) — set on the tree, since Discord
+   writes the scroller's padding inline. */
+nav[class*="guilds_"] > [class^="tree_"] {
+  padding-top: 16px;
+}
+
+/* Home button: the Apple logo instead of Discord's. Drawn as a mask so it
+   takes the button's own color at rest, on hover and when selected. */
+[data-list-item-id="guildsnav___home"] [class^="childWrapper_"] > svg {
+  display: none;
+}
+
+[data-list-item-id="guildsnav___home"] [class^="childWrapper_"]::after {
+  content: "";
+  width: 22px;
+  height: 22px;
+  background-color: currentColor;
+  -webkit-mask: var(--ac-home-glyph) center / contain no-repeat;
+  mask: var(--ac-home-glyph) center / contain no-repeat;
+}
+
+[class^="sidebarResizeHandle_"] {
+  background: transparent;
+}
+
+/* ── User panel ──────────────────────────────────────────────────────── */
+
+/* Discord positions it absolutely at the bottom of the sidebar, 8px in.
+   The glass lives on a ::before behind the content rather than on the
+   panel itself: the panel holds looping videos (quest promo, nameplate),
+   and a backdrop-filter layer with live video inside flickers in Chromium. */
+section[class^="panels_"] {
+  border-radius: var(--ac-radius-plate);
+  isolation: isolate;
+  background: transparent;
+  box-shadow: var(--ac-specular-strong), var(--ac-shadow-float);
+  border: none;
+}
+
+section[class^="panels_"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ac-glass-plate);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  pointer-events: none;
+}
+
+/* The account row carries the nameplate video, which runs a pixel past the
+   panel; clip it to the panel's bottom corners. The panel itself can't
+   clip: the quest card expands above it. */
+section[class^="panels_"] > [class^="container_"]:last-child {
+  overflow: hidden;
+  border-radius: 0 0 var(--ac-radius-plate) var(--ac-radius-plate);
+}
+
+/* ── Content layer ───────────────────────────────────────────────────── */
+
+[class^="base_"] > [class^="content_"] > [class^="page_"],
+[class^="page_"] :is(
+  [class^="chat_"],
+  main[class^="chatContent_"],
+  main[class^="container_"],
+  [class^="tabBody_"],
+  [class^="peopleColumn_"],
+  [class^="nowPlayingColumn_"]
+) {
+  background: transparent;
+}
+
+/* Page header: no divider. Nothing scrolls under it, so there is no edge
+   to mark — spacing does the separating. */
+[class^="page_"] section:has(> [class^="upperContainer_"]),
+[class^="page_"] [class^="subtitleContainer_"] {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Members list: same content layer, set apart by a hairline. */
+[class^="page_"] [class^="container_"]:has(> aside[class^="membersWrap_"]) {
+  background: transparent;
+  box-shadow: inset 1px 0 0 0 var(--ac-separator-soft);
+}
+
+aside[class^="membersWrap_"],
+aside[class^="membersWrap_"] [class^="members_"] {
+  background: transparent;
+}
+
+/* Discord fades the last message into the old opaque composer bar. */
+[class^="chatGradient_"] {
+  display: none;
+}
+
+/* ── 40-components.css ───────────────────────────────────────────────── */
+/*
+ * Components: shapes and states. The glass material for anything that
+ * floats above Discord lives in 45-overlays.css.
+ */
+
+:root {
+  /* How far the messages run beneath the composer's glass. */
+  --ac-composer-overlap: 28px;
+}
+
+/* ── Composer ────────────────────────────────────────────────────────── */
+
+/* The form stays in flow (so it still grows with multi-line drafts and the
+   reply bar) but overlaps the end of the message list by a fixed amount:
+   the newest messages slide under the glass as they arrive. */
+main[class^="chatContent_"] > form[class^="form_"] {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(-1 * var(--ac-composer-overlap));
+  background: transparent;
+}
+
+[class^="messagesWrapper_"] ol[class^="scrollerInner_"] {
+  padding-bottom: var(--ac-composer-overlap);
+}
+
+/* The glass sits on a ::before, not on the composer itself: the slash-command
+   and mention autocomplete is rendered inside the composer, and an element
+   with a backdrop-filter is the backdrop root of its descendants — the
+   popup's blur could not reach the chat behind it. */
+form[class^="form_"] [class^="channelTextArea_"] {
+  border-radius: 22px;
+  isolation: isolate;
+  background: transparent;
+  box-shadow: var(--ac-specular-strong), var(--ac-shadow-float);
+  border: none;
+}
+
+form[class^="form_"] [class^="channelTextArea_"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ac-glass-plate);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  pointer-events: none;
+}
+
+form[class^="form_"] [class^="channelTextArea_"] [class^="scrollableContainer_"] {
+  background: transparent;
+  border-radius: inherit;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+
+/* Capsules, as on iOS 26/27 and macOS Tahoe. Discord rounds both the button
+   and its inner wrapper, which carries the hover fill. */
+button[class^="button_"],
+button[class^="button_"] [class^="buttonChildrenWrapper_"] {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* Settings-window scale: Discord's medium button is 40px with 16px text;
+   Apple's regular control in a sheet is closer to 32px with 14px text. */
+button[class^="button_"][class*=" md_"] [class^="buttonChildrenWrapper_"] {
+  min-height: 30px;
+  padding: 5px 15px;
+}
+
+button[class^="button_"][class*=" md_"] [class*="text-md/"] {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+/* The DM "find or start a conversation" bar is a secondary button posing as
+   a search field: keep its placeholder gray, not tinted like an action. */
+[class^="searchBar_"] button[class*="secondary_"] {
+  color: var(--ac-label-secondary);
+}
+
+/* Search fields are capsules in iOS 26/27 (any text input carrying an icon:
+   the magnifier or the clear button). */
+[class^="wrapper_"]:has(> input[class^="input_"]):has(svg) {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* ── Friends ─────────────────────────────────────────────────────────── */
+
+/* Tabs (Online / All / Pending / Add): capsules, like the rest of the
+   controls; the add-friend tab keeps its tint as the primary action. */
+[class^="tabBar_"] > [class^="item_"] {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* Rows: rounded hover, and separators that start where the text does, as in
+   an iOS list (14px row margin + 10px padding + 32px avatar + 12px gap). */
+[class^="peopleList_"] [class^="peopleListItem_"],
+[class^="peopleList_"] [class^="peopleListItem_"] > [class^="rowButton_"] {
+  border-radius: var(--ac-radius-card);
+}
+
+[class^="peopleList_"] [class^="divider_"] {
+  margin-left: 68px;
+  background-color: var(--ac-separator-soft);
+}
+
+/* Message / more buttons: visible fills instead of black on black. */
+[class^="peopleListItem_"] [class^="actionButton_"] {
+  background-color: var(--ac-fill-quaternary);
+}
+
+[class^="peopleListItem_"]:hover [class^="actionButton_"] {
+  background-color: var(--ac-fill-tertiary);
+}
+
+/* Active Now: inset-grouped cards on the system background — a secondary
+   fill, no outline, no shadow. :root lifts these above Discord's own
+   `.refresh-active-now .wrapper` rule. */
+:root [class^="nowPlayingColumn_"] [class*="itemCard_"] {
+  border: none;
+  border-radius: var(--ac-radius-card);
+  background: var(--ac-bg-secondary);
+  box-shadow: none;
+}
+
+:root [class^="nowPlayingColumn_"] [class*="itemCard_"] header {
+  background: transparent;
+  box-shadow: inset 0 -1px 0 0 var(--ac-separator-soft);
+}
+
+/* ── Search results ──────────────────────────────────────────────────── */
+
+/* Result cards: black with a gray outline → inset-grouped cells, as in
+   Messages' search on the Mac. */
+:root [class^="searchResult_"] {
+  border: none;
+  border-radius: var(--ac-radius-card);
+  background: var(--ac-bg-secondary);
+}
+
+/* ── Voice channels ──────────────────────────────────────────────────── */
+
+/* The call view sits on plain black, like FaceTime: Discord's animated
+   blue-purple backdrop (a canvas in pulseGradient) goes. */
+[class^="callContainer_"] [class^="pulseGradient_"] {
+  display: none;
+}
+
+/* The voice channel's text chat beside the call: set apart by a hairline,
+   like the members list. */
+[class^="channelChatWrapper_"] {
+  box-shadow: inset 1px 0 0 0 var(--ac-separator-soft);
+}
+
+/* Joining a call is FaceTime's green button. */
+:root [class^="callContainer_"] button[class*="overlay-primary_"] {
+  background-color: var(--ac-green);
+  color: #ffffff;
+}
+
+/* ── Store (Nitro home, Shop) ────────────────────────────────────────── */
+
+/* App Store treatment: the system background instead of the purple
+   marketing gradient (an <img> behind the page). The illustrations stay —
+   they're the content. */
+[class^="applicationStore_"] img[class^="gradient_"] {
+  display: none;
+}
+
+/* Discord's nitro-* type styles are italic all-caps at 800–900 weight;
+   Apple's large and section titles are upright, sentence case, bold and
+   tightly tracked. Discord pins the weight from `html:not(…) .a .b`, hence
+   the :not(#ac) id boost (see 45-overlays.css). */
+:root :is([class*="nitro-xl_"], [class*="nitro-lg_"], [class*="nitro-md_"], [class*="nitro-sm_"]):not(#ac) {
+  text-transform: none;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: var(--ac-tracking-display);
+}
+
+/* Cards: grouped fills with no outline ring, as on the App Store. */
+[class^="applicationStore_"] [class^="card_"] {
+  box-shadow: none;
+}
+
+/* Shop: product tiles (8px corners, a 2px gray border, black fill) and the
+   hero banner (outline + glow ring) become plain App Store cards. */
+:root [class^="productCardContainer_"] {
+  border: none;
+  border-radius: var(--ac-radius-card);
+  background: var(--ac-bg-secondary);
+  overflow: hidden;
+}
+
+:root [class^="heroBlockContent_"] {
+  border: none;
+  box-shadow: none;
+}
+
+/* ── Switches ────────────────────────────────────────────────────────── */
+
+/* Discord animates the track color in JS and writes it inline with a
+   hard-coded blurple, so the --switch-* tokens never reach it. Overriding
+   an inline style takes !important; :has() reads the real checked state. */
+label:has(> [class^="switchIndicator_"]) > [class^="switchIndicator_"] {
+  background-color: var(--ac-fill) !important;
+  border-color: transparent !important;
+  transition: background-color 200ms ease;
+}
+
+label:has(> [class^="switchIndicator_"]):has(input:checked) > [class^="switchIndicator_"] {
+  background-color: var(--ac-green) !important;
+}
+
+label:has(> [class^="switchIndicator_"]) > svg[class^="thumb_"] {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* ── Messages ────────────────────────────────────────────────────────── */
+
+/* Hover highlight as a rounded card inset from the edges, not a full-width bar. */
+li[class^="messageListItem_"] > [class^="message_"] {
+  margin-inline: var(--ac-inset);
+  border-radius: var(--ac-radius-card);
+}
+
+/* ── Menus ───────────────────────────────────────────────────────────── */
+
+/* Discord sizes menus to their content and insets items by 8px through the
+   inner scroller; adding padding here would truncate the labels. */
+[class^="menu_"][role="menu"] {
+  border-radius: var(--ac-radius-card);
+}
+
+/* Concentric: item radius = menu radius − the scroller's 8px inset. */
+[class^="menu_"][role="menu"] [role^="menuitem"] {
+  border-radius: calc(var(--ac-radius-card) - 8px);
+}
+
+/* macOS menus highlight the focused item with the tint color. */
+[class^="menu_"][role="menu"] [role^="menuitem"][class*="focused_"]:not([class*="colorDanger_"]) {
+  background: var(--ac-accent);
+  color: var(--ac-on-accent);
+}
+
+[class^="menu_"][role="menu"] [role^="menuitem"][class*="focused_"][class*="colorDanger_"] {
+  background: var(--ac-red);
+  color: var(--ac-on-accent);
+}
+
+/* Gray separators vanish on the frost; Apple's are a faint light line. */
+[class^="menu_"][role="menu"] [role="separator"] {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Selection in menus is a checkmark, as on macOS and iOS — not radio
+   buttons or checkboxes. Drawn as a mask in the label color (Discord tints
+   the icon slot a dimmer gray), which stays white on a highlighted row. */
+[role="menu"] :is([role="menuitemradio"], [role="menuitemcheckbox"]) [class^="iconContainer_"] > * {
+  display: none;
+}
+
+[role="menu"] :is([role="menuitemradio"], [role="menuitemcheckbox"])[aria-checked="true"] [class^="iconContainer_"]::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: var(--ac-label);
+  -webkit-mask: var(--ac-checkmark) center / contain no-repeat;
+  mask: var(--ac-checkmark) center / contain no-repeat;
+}
+
+/* ── Tooltips ────────────────────────────────────────────────────────── */
+
+/* No pointer arrow — Liquid Glass popovers dropped the caret. */
+[class^="tooltip_"][role="tooltip"] {
+  border-radius: var(--ac-radius-control);
+  color: var(--ac-label);
+}
+
+[class^="tooltip_"][role="tooltip"] > [class*="caret_"] {
+  display: none;
+}
+
+/* ── Profile cards ───────────────────────────────────────────────────── */
+
+.user-profile-popout {
+  border-radius: var(--ac-radius-pane);
+  overflow: hidden;
+}
+
+/* Grouped sections inside the card, like an inset-grouped list. */
+.user-profile-popout [class*="menuOverlay_"] {
+  background: var(--ac-fill-quaternary);
+  border-radius: var(--ac-radius-card);
+}
+
+/* ── 45-overlays.css ─────────────────────────────────────────────────── */
+/*
+ * Overlays: everything that opens above the base Discord UI is Liquid Glass.
+ *
+ * Discord renders these into its layer containers, so they're matched by
+ * ARIA role and structure rather than by component name — new popouts get
+ * the glass without having to be listed one by one.
+ */
+
+
+
+/* The material. :where() zeroes the list's specificity and :not(#ac) adds
+   one id's worth, so this beats any class-based Discord rule without
+   !important — and an override below only needs its own selector plus
+   :not(#ac) to win, without repeating the list. */
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac) {
+  border: none;
+  background: var(--ac-glass-popover);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  box-shadow: var(--ac-specular), var(--ac-shadow-float);
+}
+
+/* Inside the glass, Discord's own surface colors go clear so the material
+   reads through; nested cards become translucent fills, not opaque grays.
+   Nested .theme-dark elements re-declare the palette, so they're covered too. */
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac),
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))) :is(.theme-dark, .theme-darker, .theme-midnight):not(#ac) {
+  --background-base-lowest: transparent;
+  --background-base-lower: transparent;
+  --background-base-low: transparent;
+  --background-surface-high: transparent;
+  --background-surface-higher: var(--ac-fill-quaternary);
+  --background-surface-highest: var(--ac-fill-tertiary);
+  --bg-surface-raised: transparent;
+  --background-secondary-alt: transparent;
+  --modal-background: transparent;
+  --modal-footer-background: transparent;
+  --chat-background: transparent;
+  --chat-background-default: transparent;
+}
+
+/* ── Shapes ──────────────────────────────────────────────────────────── */
+
+/* Popouts and pickers */
+:root :is(
+  [class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]),
+  [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
+  [class^="autocomplete_"]
+) {
+  border-radius: var(--ac-radius-popover);
+  overflow: hidden;
+}
+
+/* Modals */
+:root :is([class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"]) {
+  border-radius: var(--ac-radius-pane);
+  overflow: hidden;
+}
+
+:root :is([class^="layerContainer_"] [role="listbox"], [class^="selectDropdown_"]) {
+  border-radius: var(--ac-radius-card);
+}
+
+/* Full-screen layers. Discord fades the app out underneath them with an
+   inline opacity: 0, which left the glass nothing to show — keep it visible.
+   A full-screen layer that isn't a settings view stays one pane of glass. */
+:root [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]):not(#ac) {
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--ac-glass-sheet);
+}
+
+[class^="layers_"]:has(> [class^="layer_"]:not([class*="baseLayer_"])) > [class*="baseLayer_"] {
+  opacity: 1 !important;
+}
+
+/* Server and channel settings: a floating window, like the user settings
+   modal. The layer is only the dim; the settings view is the glass. The view
+   sits directly in the layer for channels but one wrapper deeper for servers,
+   hence descendant selectors and absolute centering. */
+:root [class^="layers_"] > [class^="layer_"]:has([class^="standardSidebarView_"]):not(#ac) {
+  background: var(--ac-scrim);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+:root [class^="layers_"] > [class^="layer_"] [class^="standardSidebarView_"] {
+  position: absolute;
+  inset: 0;
+  /* Sized to Discord's standard settings layout — 272px sidebar + 740px
+     content column + 16px scrollbar gutter — so there's no empty band on
+     the right and the window keeps one width across pages. */
+  width: min(1028px, 100% - 2 * 64px);
+  height: min(982px, 100% - 2 * 40px);
+  margin: auto;
+  border-radius: var(--ac-radius-pane);
+  overflow: hidden;
+  background: var(--ac-glass-popover);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  box-shadow: var(--ac-specular), var(--ac-shadow-float);
+}
+
+/* Discord fades the whole layer in and out with an inline opacity, and a
+   backdrop-filter shows nothing while an ancestor is translucent: the
+   window's blur only appeared once the fade had finished. So the layer
+   stays opaque and the fades move onto the window and the dim themselves.
+   The base layer's aria-hidden tells the phases apart: "true" from the
+   first frame of opening, "false" from the first frame of closing. */
+[class^="layers_"] > [class^="layer_"]:has([class^="standardSidebarView_"]) {
+  opacity: 1 !important;
+  animation: ac-dim-in 200ms ease-out both;
+}
+
+[class^="layers_"]:has(> [class*="baseLayer_"][aria-hidden="false"]) > [class^="layer_"]:has([class^="standardSidebarView_"]) {
+  animation: ac-dim-out 160ms ease-in both;
+}
+
+[class^="layers_"]:has(> [class*="baseLayer_"][aria-hidden="false"]) > [class^="layer_"] [class^="standardSidebarView_"] {
+  animation: ac-fade-out 160ms ease-in both;
+}
+
+@keyframes ac-dim-in {
+  from { background-color: transparent; }
+}
+
+@keyframes ac-dim-out {
+  to { background-color: transparent; }
+}
+
+@keyframes ac-fade-out {
+  to { opacity: 0; }
+}
+
+/* Popouts using Discord's "fade" animator (your own profile card) had the
+   same gap, for 80ms: the wrapper stays opaque and the card fades itself. */
+[class^="animator"][class*=" fade_"] {
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+[class^="animator"][class*=" fade_"] .user-profile-popout {
+  animation: ac-fade 120ms ease-out both;
+}
+
+/* Discord centers the sidebar across the whole screen; in a window it hugs
+   the left edge, set apart by a hairline as in the user settings. */
+:root [class^="standardSidebarView_"] > [class^="sidebarRegion_"] {
+  flex: 0 0 auto;
+  box-shadow: inset -1px 0 0 0 var(--ac-separator-soft);
+}
+
+/* The content region no longer stretches to Discord's 800px basis. */
+:root [class^="standardSidebarView_"] > [class^="contentRegion_"] {
+  flex: 1 1 auto;
+}
+
+/* Close button in the window's top-right corner, as in the user settings,
+   on every page variant (some lay it out in flow, some fixed). Fixed here:
+   the window's backdrop-filter makes it the containing block, so the
+   offsets are from the window's edges. Its old column takes no room. */
+:root [class^="standardSidebarView_"] [class^="toolsContainer_"] {
+  flex: 0 0 0px;
+  width: 0;
+  margin: 0;
+}
+
+:root [class^="standardSidebarView_"] [class^="tools_"] {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  left: auto;
+}
+
+/* Dim behind modals: lighter than Discord's, so the glass still reads. */
+:root [class^="scrim_"] {
+  background: var(--ac-scrim);
+}
+
+/* Media viewer: the app recedes behind a dark, frosted backdrop, like
+   Quick Look — the image is the only thing in focus. */
+:root [class^="scrim_"][class*="lightbox_"] {
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(120%);
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(120%);
+}
+
+:root [class^="carouselModal_"] [class^="actionButtons_"]:not(#ac) {
+  border-radius: var(--ac-radius-pill);
+  box-shadow: var(--ac-specular), var(--ac-shadow-control);
+}
+
+/* ── Modals ──────────────────────────────────────────────────────────── */
+
+/* Settings: a hairline between the sidebar and the content, like System
+   Settings. The modal is already glass — no second layer for the sidebar. */
+:root [class^="outerContainer_"] > [class^="container_"] aside[class^="sidebar_"] {
+  box-shadow: inset -1px 0 0 0 var(--ac-separator-soft);
+}
+
+/* ── Menus ───────────────────────────────────────────────────────────── */
+
+/* The glass sits on a ::before rather than on the menu itself. Discord
+   renders a submenu inside its parent menu, and an element with a
+   backdrop-filter is the backdrop root of its descendants: the submenu's
+   blur could only see the parent's own pixels, so the page showed through
+   it sharp, behind a tint. */
+:root [role="menu"]:not(#ac) {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--ac-specular-strong), var(--ac-shadow-float);
+}
+
+:root [role="menu"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  /* Frost, a touch brighter at the top: light falls on the glass from above. */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 45%),
+    var(--ac-glass-menu);
+  -webkit-backdrop-filter: blur(var(--ac-glass-menu-blur)) saturate(var(--ac-glass-saturate)) brightness(var(--ac-glass-menu-dim));
+  backdrop-filter: blur(var(--ac-glass-menu-blur)) saturate(var(--ac-glass-saturate)) brightness(var(--ac-glass-menu-dim));
+  pointer-events: none;
+}
+
+/* Full profile modal: Discord rounds its themed content at 18px with its own
+   1px gray border, inside our 24px modal — the two outlines drifted apart at
+   the corners. The content follows the modal's radius; the rim is the
+   glass's specular edge, so Discord's border goes. */
+:root .user-profile-modal-v2:not(#ac) {
+  border: none;
+}
+
+:root :is(
+  [class^="layoutContainer_"]:has(> .user-profile-modal-v2),
+  .user-profile-modal-v2,
+  .user-profile-modal-v2 > [class^="inner_"],
+  .user-profile-modal-v2 > [class^="inner_"] > :is([class^="backgroundImage_"], [class^="scrim_"])
+):not(#ac) {
+  border-radius: var(--ac-radius-pane);
+}
+
+/* ── Tooltips ────────────────────────────────────────────────────────── */
+
+:root [role="tooltip"]:not(#ac) {
+  box-shadow: var(--ac-specular), var(--ac-shadow-control);
+}
+
+/* ── Emoji picker ────────────────────────────────────────────────────── */
+
+/* Sticky category headers: clear now, so they blur the emoji scrolling
+   beneath instead of letting it show through the label. The picker is
+   itself a backdrop root, so this blurs its own content only. */
+:root [class*="expressionPickerPositionLayer_"] [class^="wrapper_"][class*="header_"] {
+  background: rgba(40, 40, 44, 0.4);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+/* ── Search ──────────────────────────────────────────────────────────── */
+
+/* Discord fades long filter labels with a mask painted in
+   --background-surface-high, which is clear inside the glass — the labels
+   vanished. Same fade in black: a mask only reads alpha. */
+:root [class^="groupWrapper_"] [class^="item_"] {
+  -webkit-mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+}
+
+/* ── Message actions ─────────────────────────────────────────────────── */
+
+:root [class^="buttonsInner_"]:not(#ac) {
+  padding: 2px;
+  border-radius: var(--ac-radius-pill);
+  box-shadow: var(--ac-specular), var(--ac-shadow-control);
+}
+
+:root [class^="buttonsInner_"] [class^="hoverBarButton_"] {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* ── Autocomplete ────────────────────────────────────────────────────── */
+
+/* A suggestion list, like a menu: same frosted material. (Its blur reaches
+   the chat now that the composer's glass is on a ::before.) */
+:root [class^="autocomplete_"]:not(#ac) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 45%),
+    var(--ac-glass-menu);
+  -webkit-backdrop-filter: blur(var(--ac-glass-menu-blur)) saturate(var(--ac-glass-saturate)) brightness(var(--ac-glass-menu-dim));
+  backdrop-filter: blur(var(--ac-glass-menu-blur)) saturate(var(--ac-glass-saturate)) brightness(var(--ac-glass-menu-dim));
+  box-shadow: var(--ac-specular-strong), var(--ac-shadow-float);
+}
+
+/* ── Pills over the chat ─────────────────────────────────────────────── */
+
+:root :is([class^="newMessagesPill_"], [class^="jumpToPresentButton_"]) {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* ── 50-motion.css ───────────────────────────────────────────────────── */
+/*
+ * Motion, from Apple's "Designing Fluid Interfaces":
+ *   - feedback on press, instantly (pointer-down, not release)
+ *   - springs, not fixed curves; critically damped by default
+ *   - glass "materializes": scale + opacity together, from its anchor
+ *
+ * Uses the individual `scale` property so Discord's own inline transforms
+ * are never overwritten.
+ */
+
+/* ── Press feedback ──────────────────────────────────────────────────── */
+
+:is(
+  button[class^="button_"],
+  [class^="toolbar_"] [role="button"],
+  section[class^="panels_"] button,
+  form[class^="form_"] [class^="buttons_"] [role="button"],
+  [data-list-item-id^="guildsnav___"]
+) {
+  /* Release springs back with a touch of bounce: the press was physical. */
+  transition:
+    scale var(--ac-spring-bouncy-duration) var(--ac-spring-bouncy),
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+:is(
+  button[class^="button_"],
+  [class^="toolbar_"] [role="button"],
+  section[class^="panels_"] button,
+  form[class^="form_"] [class^="buttons_"] [role="button"],
+  [data-list-item-id^="guildsnav___"]
+):active:not(:disabled, [aria-disabled="true"]) {
+  scale: var(--ac-press-scale);
+  transition-duration: 80ms;
+  transition-timing-function: ease-out;
+}
+
+/* ── Materialize ─────────────────────────────────────────────────────── */
+
+@keyframes ac-pop {
+  from {
+    scale: 0.94;
+  }
+}
+
+@keyframes ac-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Context menus open at the cursor, which is their top-left corner. The
+   menu itself only scales: an element at opacity < 1 hides the backdrop
+   blur of its glass (on ::before) and of any submenu inside it. The fade
+   runs on the glass and the content instead. Fill is `backwards`, so no
+   finished animation lingers on these elements and keeps them composited. */
+[class^="menu_"][role="menu"] {
+  transform-origin: top left;
+  animation: ac-pop var(--ac-spring-smooth-duration) var(--ac-spring-smooth) backwards;
+}
+
+[class^="menu_"][role="menu"]::before,
+[class^="menu_"][role="menu"] > * {
+  animation: ac-fade 160ms ease-out backwards;
+}
+
+/* ── 90-accessibility.css ────────────────────────────────────────────── */
+/*
+ * Accessibility. Three independent signals, each with a gentler equivalent
+ * rather than "nothing": reduced motion keeps cross-fades, reduced
+ * transparency keeps the hierarchy with solid materials.
+ */
+
+/* System setting, and Discord's own "Reduce motion" (.reduce-motion on <html>) */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ac-spring-smooth: ease;
+    --ac-spring-bouncy: ease;
+    --ac-spring-smooth-duration: 180ms;
+    --ac-spring-bouncy-duration: 120ms;
+    --ac-press-scale: 1;
+  }
+
+  [class^="menu_"][role="menu"] {
+    animation-name: none;
+  }
+}
+
+:root.reduce-motion {
+  --ac-spring-smooth: ease;
+  --ac-spring-bouncy: ease;
+  --ac-spring-smooth-duration: 180ms;
+  --ac-spring-bouncy-duration: 120ms;
+  --ac-press-scale: 1;
+}
+
+:root.reduce-motion [class^="menu_"][role="menu"] {
+  animation-name: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --ac-glass-blur: 0px;
+    --ac-glass-sidebar: var(--ac-bg-secondary);
+    --ac-glass-plate: var(--ac-bg-tertiary);
+    --ac-glass-popover: var(--ac-bg-tertiary);
+    --ac-glass-menu: var(--ac-bg-tertiary);
+    --ac-glass-menu-blur: 0px;
+    --ac-glass-menu-dim: 1;
+    --ac-glass-sheet: var(--ac-bg-secondary);
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --ac-label-secondary: rgba(235, 235, 245, 0.84);
+    --ac-label-tertiary: rgba(235, 235, 245, 0.6);
+    --ac-separator: rgba(160, 160, 168, 0.9);
+    --ac-separator-soft: rgba(160, 160, 168, 0.6);
+    --ac-glass-sidebar: rgba(28, 28, 30, 0.96);
+    --ac-glass-plate: rgba(44, 44, 46, 0.96);
+    --ac-glass-popover: rgba(44, 44, 46, 0.97);
+    --ac-glass-menu: rgba(44, 44, 46, 0.97);
+    --ac-glass-menu-dim: 1;
+    --ac-glass-sheet: rgba(22, 22, 24, 0.96);
+    --ac-specular: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    --ac-specular-strong: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  }
+}

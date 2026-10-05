@@ -1,0 +1,66 @@
+/*
+ * Motion, from Apple's "Designing Fluid Interfaces":
+ *   - feedback on press, instantly (pointer-down, not release)
+ *   - springs, not fixed curves; critically damped by default
+ *   - glass "materializes": scale + opacity together, from its anchor
+ *
+ * Uses the individual `scale` property so Discord's own inline transforms
+ * are never overwritten.
+ */
+
+/* ── Press feedback ──────────────────────────────────────────────────── */
+
+:is(
+  button[class^="button_"],
+  [class^="toolbar_"] [role="button"],
+  section[class^="panels_"] button,
+  form[class^="form_"] [class^="buttons_"] [role="button"],
+  [data-list-item-id^="guildsnav___"]
+) {
+  /* Release springs back with a touch of bounce: the press was physical. */
+  transition:
+    scale var(--ac-spring-bouncy-duration) var(--ac-spring-bouncy),
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+:is(
+  button[class^="button_"],
+  [class^="toolbar_"] [role="button"],
+  section[class^="panels_"] button,
+  form[class^="form_"] [class^="buttons_"] [role="button"],
+  [data-list-item-id^="guildsnav___"]
+):active:not(:disabled, [aria-disabled="true"]) {
+  scale: var(--ac-press-scale);
+  transition-duration: 80ms;
+  transition-timing-function: ease-out;
+}
+
+/* ── Materialize ─────────────────────────────────────────────────────── */
+
+@keyframes ac-pop {
+  from {
+    scale: 0.94;
+  }
+}
+
+@keyframes ac-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Context menus open at the cursor, which is their top-left corner. The
+   menu itself only scales: an element at opacity < 1 hides the backdrop
+   blur of its glass (on ::before) and of any submenu inside it. The fade
+   runs on the glass and the content instead. Fill is `backwards`, so no
+   finished animation lingers on these elements and keeps them composited. */
+[class^="menu_"][role="menu"] {
+  transform-origin: top left;
+  animation: ac-pop var(--ac-spring-smooth-duration) var(--ac-spring-smooth) backwards;
+}
+
+[class^="menu_"][role="menu"]::before,
+[class^="menu_"][role="menu"] > * {
+  animation: ac-fade 160ms ease-out backwards;
+}

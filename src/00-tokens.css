@@ -1,0 +1,96 @@
+/*
+ * Applecord design tokens.
+ * Everything a user may want to tweak lives here, under --ac-*.
+ *
+ * Like an Apple app: content sits on a plain system background, and Liquid
+ * Glass is reserved for the navigation layer that floats above it (sidebar,
+ * toolbar controls, composer). No decorative wallpaper.
+ */
+
+:root {
+  /* System backgrounds (iOS, dark appearance) */
+  --ac-bg: #000000;           /* systemBackground — content layer */
+  --ac-bg-secondary: #1c1c1e; /* secondarySystemBackground */
+  --ac-bg-tertiary: #2c2c2e;  /* tertiarySystemBackground */
+
+  /* System fills — controls, chips, search fields, hover states */
+  --ac-fill: rgba(120, 120, 128, 0.36);
+  --ac-fill-secondary: rgba(120, 120, 128, 0.32);
+  --ac-fill-tertiary: rgba(118, 118, 128, 0.24);
+  --ac-fill-quaternary: rgba(116, 116, 128, 0.18);
+
+  /* Labels */
+  --ac-label: #ffffff;
+  --ac-label-secondary: rgba(235, 235, 245, 0.6);
+  --ac-label-tertiary: rgba(235, 235, 245, 0.3);
+  --ac-label-quaternary: rgba(235, 235, 245, 0.18);
+
+  /* Separators */
+  --ac-separator: rgba(84, 84, 88, 0.6);
+  --ac-separator-soft: rgba(84, 84, 88, 0.34);
+
+  /* Tint — iOS system blue, plus the semantic system colors */
+  --ac-accent: #0a84ff;
+  --ac-accent-hover: #409cff;
+  --ac-on-accent: #ffffff;
+  --ac-green: #30d158;
+  --ac-red: #ff453a;
+  --ac-orange: #ff9f0a;
+  --ac-yellow: #ffd60a;
+
+  /* Liquid Glass. Weight encodes hierarchy: the sidebar is a structural,
+     heavier pane; controls are lighter. Never stack light glass on light. */
+  --ac-glass-blur: 30px;
+  --ac-glass-saturate: 180%;
+  --ac-glass-sidebar: rgba(36, 36, 40, 0.62);
+  --ac-glass-plate: rgba(58, 58, 62, 0.55);    /* user panel, composer */
+  --ac-glass-popover: rgba(40, 40, 44, 0.72);  /* menus, popouts, modals */
+  /* Menus: frosted Liquid Glass. A white veil lifts what's behind instead
+     of darkening it, and the backdrop is dimmed first (brightness) so a
+     bright image behind can't wash out the white labels — a CSS stand-in
+     for Apple's luminosity clamping. */
+  --ac-glass-menu: rgba(255, 255, 255, 0.12);
+  --ac-glass-menu-blur: 20px;
+  --ac-glass-menu-dim: 0.6;
+  --ac-glass-sheet: rgba(22, 22, 24, 0.72);    /* full-screen layers */
+  --ac-scrim: rgba(0, 0, 0, 0.32);
+  --ac-glass-control: rgba(255, 255, 255, 0.08);
+  --ac-glass-control-hover: rgba(255, 255, 255, 0.13);
+  --ac-glass-control-active: rgba(255, 255, 255, 0.18);
+
+  /* The rim: light catches the top edge of the glass. */
+  --ac-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --ac-specular-strong: inset 0 1px 0 0 rgba(255, 255, 255, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+
+  /* Shadows — bigger surfaces read as thicker. */
+  --ac-shadow-pane: 0 10px 30px -6px rgba(0, 0, 0, 0.55);
+  --ac-shadow-float: 0 16px 48px -8px rgba(0, 0, 0, 0.7), 0 2px 10px -2px rgba(0, 0, 0, 0.4);
+  --ac-shadow-control: 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+
+  /* Geometry. Corners are concentric: outer radius = inner radius + inset. */
+  --ac-inset: 8px;
+  --ac-radius-pane: 24px;
+  --ac-radius-plate: calc(var(--ac-radius-pane) - var(--ac-inset));
+  --ac-radius-popover: 20px;
+  --ac-radius-card: 14px;
+  --ac-radius-control: 10px;
+  --ac-radius-pill: 999px;
+
+  /* Typography — the system font ships optical sizing and tracking tables. */
+  --ac-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", sans-serif;
+  --ac-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", system-ui, sans-serif;
+  --ac-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+  --ac-tracking-display: -0.022em;
+  --ac-tracking-title: -0.012em;
+  --ac-tracking-caption: 0.01em;
+
+  /* Motion */
+  --ac-press-scale: 0.96;
+
+  /* Checkmark for selected menu items (SF Symbols' "checkmark" weight). */
+  --ac-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+
+  /* Home button glyph (replaces the Discord logo). Any single-color SVG
+     works: it's used as a mask, so it takes the button's color. */
+  --ac-home-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701'/%3E%3C/svg%3E");
+}

@@ -1,0 +1,298 @@
+/*
+ * Components: shapes and states. The glass material for anything that
+ * floats above Discord lives in 45-overlays.css.
+ */
+
+:root {
+  /* How far the messages run beneath the composer's glass. */
+  --ac-composer-overlap: 28px;
+}
+
+/* ── Composer ────────────────────────────────────────────────────────── */
+
+/* The form stays in flow (so it still grows with multi-line drafts and the
+   reply bar) but overlaps the end of the message list by a fixed amount:
+   the newest messages slide under the glass as they arrive. */
+main[class^="chatContent_"] > form[class^="form_"] {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(-1 * var(--ac-composer-overlap));
+  background: transparent;
+}
+
+[class^="messagesWrapper_"] ol[class^="scrollerInner_"] {
+  padding-bottom: var(--ac-composer-overlap);
+}
+
+/* The glass sits on a ::before, not on the composer itself: the slash-command
+   and mention autocomplete is rendered inside the composer, and an element
+   with a backdrop-filter is the backdrop root of its descendants — the
+   popup's blur could not reach the chat behind it. */
+form[class^="form_"] [class^="channelTextArea_"] {
+  border-radius: 22px;
+  isolation: isolate;
+  background: transparent;
+  box-shadow: var(--ac-specular-strong), var(--ac-shadow-float);
+  border: none;
+}
+
+form[class^="form_"] [class^="channelTextArea_"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ac-glass-plate);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  pointer-events: none;
+}
+
+form[class^="form_"] [class^="channelTextArea_"] [class^="scrollableContainer_"] {
+  background: transparent;
+  border-radius: inherit;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+
+/* Capsules, as on iOS 26/27 and macOS Tahoe. Discord rounds both the button
+   and its inner wrapper, which carries the hover fill. */
+button[class^="button_"],
+button[class^="button_"] [class^="buttonChildrenWrapper_"] {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* Settings-window scale: Discord's medium button is 40px with 16px text;
+   Apple's regular control in a sheet is closer to 32px with 14px text. */
+button[class^="button_"][class*=" md_"] [class^="buttonChildrenWrapper_"] {
+  min-height: 30px;
+  padding: 5px 15px;
+}
+
+button[class^="button_"][class*=" md_"] [class*="text-md/"] {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+/* The DM "find or start a conversation" bar is a secondary button posing as
+   a search field: keep its placeholder gray, not tinted like an action. */
+[class^="searchBar_"] button[class*="secondary_"] {
+  color: var(--ac-label-secondary);
+}
+
+/* Search fields are capsules in iOS 26/27 (any text input carrying an icon:
+   the magnifier or the clear button). */
+[class^="wrapper_"]:has(> input[class^="input_"]):has(svg) {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* ── Friends ─────────────────────────────────────────────────────────── */
+
+/* Tabs (Online / All / Pending / Add): capsules, like the rest of the
+   controls; the add-friend tab keeps its tint as the primary action. */
+[class^="tabBar_"] > [class^="item_"] {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* Rows: rounded hover, and separators that start where the text does, as in
+   an iOS list (14px row margin + 10px padding + 32px avatar + 12px gap). */
+[class^="peopleList_"] [class^="peopleListItem_"],
+[class^="peopleList_"] [class^="peopleListItem_"] > [class^="rowButton_"] {
+  border-radius: var(--ac-radius-card);
+}
+
+[class^="peopleList_"] [class^="divider_"] {
+  margin-left: 68px;
+  background-color: var(--ac-separator-soft);
+}
+
+/* Message / more buttons: visible fills instead of black on black. */
+[class^="peopleListItem_"] [class^="actionButton_"] {
+  background-color: var(--ac-fill-quaternary);
+}
+
+[class^="peopleListItem_"]:hover [class^="actionButton_"] {
+  background-color: var(--ac-fill-tertiary);
+}
+
+/* Active Now: inset-grouped cards on the system background — a secondary
+   fill, no outline, no shadow. :root lifts these above Discord's own
+   `.refresh-active-now .wrapper` rule. */
+:root [class^="nowPlayingColumn_"] [class*="itemCard_"] {
+  border: none;
+  border-radius: var(--ac-radius-card);
+  background: var(--ac-bg-secondary);
+  box-shadow: none;
+}
+
+:root [class^="nowPlayingColumn_"] [class*="itemCard_"] header {
+  background: transparent;
+  box-shadow: inset 0 -1px 0 0 var(--ac-separator-soft);
+}
+
+/* ── Search results ──────────────────────────────────────────────────── */
+
+/* Result cards: black with a gray outline → inset-grouped cells, as in
+   Messages' search on the Mac. */
+:root [class^="searchResult_"] {
+  border: none;
+  border-radius: var(--ac-radius-card);
+  background: var(--ac-bg-secondary);
+}
+
+/* ── Voice channels ──────────────────────────────────────────────────── */
+
+/* The call view sits on plain black, like FaceTime: Discord's animated
+   blue-purple backdrop (a canvas in pulseGradient) goes. */
+[class^="callContainer_"] [class^="pulseGradient_"] {
+  display: none;
+}
+
+/* The voice channel's text chat beside the call: set apart by a hairline,
+   like the members list. */
+[class^="channelChatWrapper_"] {
+  box-shadow: inset 1px 0 0 0 var(--ac-separator-soft);
+}
+
+/* Joining a call is FaceTime's green button. */
+:root [class^="callContainer_"] button[class*="overlay-primary_"] {
+  background-color: var(--ac-green);
+  color: #ffffff;
+}
+
+/* ── Store (Nitro home, Shop) ────────────────────────────────────────── */
+
+/* App Store treatment: the system background instead of the purple
+   marketing gradient (an <img> behind the page). The illustrations stay —
+   they're the content. */
+[class^="applicationStore_"] img[class^="gradient_"] {
+  display: none;
+}
+
+/* Discord's nitro-* type styles are italic all-caps at 800–900 weight;
+   Apple's large and section titles are upright, sentence case, bold and
+   tightly tracked. Discord pins the weight from `html:not(…) .a .b`, hence
+   the :not(#ac) id boost (see 45-overlays.css). */
+:root :is([class*="nitro-xl_"], [class*="nitro-lg_"], [class*="nitro-md_"], [class*="nitro-sm_"]):not(#ac) {
+  text-transform: none;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: var(--ac-tracking-display);
+}
+
+/* Cards: grouped fills with no outline ring, as on the App Store. */
+[class^="applicationStore_"] [class^="card_"] {
+  box-shadow: none;
+}
+
+/* Shop: product tiles (8px corners, a 2px gray border, black fill) and the
+   hero banner (outline + glow ring) become plain App Store cards. */
+:root [class^="productCardContainer_"] {
+  border: none;
+  border-radius: var(--ac-radius-card);
+  background: var(--ac-bg-secondary);
+  overflow: hidden;
+}
+
+:root [class^="heroBlockContent_"] {
+  border: none;
+  box-shadow: none;
+}
+
+/* ── Switches ────────────────────────────────────────────────────────── */
+
+/* Discord animates the track color in JS and writes it inline with a
+   hard-coded blurple, so the --switch-* tokens never reach it. Overriding
+   an inline style takes !important; :has() reads the real checked state. */
+label:has(> [class^="switchIndicator_"]) > [class^="switchIndicator_"] {
+  background-color: var(--ac-fill) !important;
+  border-color: transparent !important;
+  transition: background-color 200ms ease;
+}
+
+label:has(> [class^="switchIndicator_"]):has(input:checked) > [class^="switchIndicator_"] {
+  background-color: var(--ac-green) !important;
+}
+
+label:has(> [class^="switchIndicator_"]) > svg[class^="thumb_"] {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* ── Messages ────────────────────────────────────────────────────────── */
+
+/* Hover highlight as a rounded card inset from the edges, not a full-width bar. */
+li[class^="messageListItem_"] > [class^="message_"] {
+  margin-inline: var(--ac-inset);
+  border-radius: var(--ac-radius-card);
+}
+
+/* ── Menus ───────────────────────────────────────────────────────────── */
+
+/* Discord sizes menus to their content and insets items by 8px through the
+   inner scroller; adding padding here would truncate the labels. */
+[class^="menu_"][role="menu"] {
+  border-radius: var(--ac-radius-card);
+}
+
+/* Concentric: item radius = menu radius − the scroller's 8px inset. */
+[class^="menu_"][role="menu"] [role^="menuitem"] {
+  border-radius: calc(var(--ac-radius-card) - 8px);
+}
+
+/* macOS menus highlight the focused item with the tint color. */
+[class^="menu_"][role="menu"] [role^="menuitem"][class*="focused_"]:not([class*="colorDanger_"]) {
+  background: var(--ac-accent);
+  color: var(--ac-on-accent);
+}
+
+[class^="menu_"][role="menu"] [role^="menuitem"][class*="focused_"][class*="colorDanger_"] {
+  background: var(--ac-red);
+  color: var(--ac-on-accent);
+}
+
+/* Gray separators vanish on the frost; Apple's are a faint light line. */
+[class^="menu_"][role="menu"] [role="separator"] {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Selection in menus is a checkmark, as on macOS and iOS — not radio
+   buttons or checkboxes. Drawn as a mask in the label color (Discord tints
+   the icon slot a dimmer gray), which stays white on a highlighted row. */
+[role="menu"] :is([role="menuitemradio"], [role="menuitemcheckbox"]) [class^="iconContainer_"] > * {
+  display: none;
+}
+
+[role="menu"] :is([role="menuitemradio"], [role="menuitemcheckbox"])[aria-checked="true"] [class^="iconContainer_"]::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: var(--ac-label);
+  -webkit-mask: var(--ac-checkmark) center / contain no-repeat;
+  mask: var(--ac-checkmark) center / contain no-repeat;
+}
+
+/* ── Tooltips ────────────────────────────────────────────────────────── */
+
+/* No pointer arrow — Liquid Glass popovers dropped the caret. */
+[class^="tooltip_"][role="tooltip"] {
+  border-radius: var(--ac-radius-control);
+  color: var(--ac-label);
+}
+
+[class^="tooltip_"][role="tooltip"] > [class*="caret_"] {
+  display: none;
+}
+
+/* ── Profile cards ───────────────────────────────────────────────────── */
+
+.user-profile-popout {
+  border-radius: var(--ac-radius-pane);
+  overflow: hidden;
+}
+
+/* Grouped sections inside the card, like an inset-grouped list. */
+.user-profile-popout [class*="menuOverlay_"] {
+  background: var(--ac-fill-quaternary);
+  border-radius: var(--ac-radius-card);
+}

@@ -1,0 +1,329 @@
+/*
+ * Overlays: everything that opens above the base Discord UI is Liquid Glass.
+ *
+ * Discord renders these into its layer containers, so they're matched by
+ * ARIA role and structure rather than by component name — new popouts get
+ * the glass without having to be listed one by one.
+ */
+
+@custom-selector :--ac-overlay
+  /* Popouts: inbox, pins, threads, profiles… (an unclassed dialog wrapper
+     whose child is the surface; modals use the same wrapper, minus theirs) */
+  [class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]),
+  .user-profile-popout,
+  /* Modals: quick switcher, settings, confirmations */
+  [class^="outerContainer_"] > [class^="container_"],
+  [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]),
+  [role="dialog"][class^="root_"],
+  /* Menus, select dropdowns, tooltips */
+  [role="menu"],
+  [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *),
+  [class^="selectDropdown_"],
+  [role="tooltip"],
+  /* Emoji / GIF / sticker picker */
+  [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
+  /* Floating controls: message actions, media viewer toolbar */
+  [class^="buttonsInner_"],
+  [class^="carouselModal_"] [class^="actionButtons_"],
+  [class^="autocomplete_"],
+  [class^="toast_"],
+  [class^="newMessagesPill_"],
+  [class^="jumpToPresentButton_"],
+  /* Full-screen layers (server settings…) */
+  [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]);
+
+/* The material. :where() zeroes the list's specificity and :not(#ac) adds
+   one id's worth, so this beats any class-based Discord rule without
+   !important — and an override below only needs its own selector plus
+   :not(#ac) to win, without repeating the list. */
+:root :where(:--ac-overlay):not(#ac) {
+  border: none;
+  background: var(--ac-glass-popover);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  box-shadow: var(--ac-specular), var(--ac-shadow-float);
+}
+
+/* Inside the glass, Discord's own surface colors go clear so the material
+   reads through; nested cards become translucent fills, not opaque grays.
+   Nested .theme-dark elements re-declare the palette, so they're covered too. */
+:root :where(:--ac-overlay):not(#ac),
+:root :where(:--ac-overlay) :is(.theme-dark, .theme-darker, .theme-midnight):not(#ac) {
+  --background-base-lowest: transparent;
+  --background-base-lower: transparent;
+  --background-base-low: transparent;
+  --background-surface-high: transparent;
+  --background-surface-higher: var(--ac-fill-quaternary);
+  --background-surface-highest: var(--ac-fill-tertiary);
+  --bg-surface-raised: transparent;
+  --background-secondary-alt: transparent;
+  --modal-background: transparent;
+  --modal-footer-background: transparent;
+  --chat-background: transparent;
+  --chat-background-default: transparent;
+}
+
+/* ── Shapes ──────────────────────────────────────────────────────────── */
+
+/* Popouts and pickers */
+:root :is(
+  [class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]),
+  [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
+  [class^="autocomplete_"]
+) {
+  border-radius: var(--ac-radius-popover);
+  overflow: hidden;
+}
+
+/* Modals */
+:root :is([class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"]) {
+  border-radius: var(--ac-radius-pane);
+  overflow: hidden;
+}
+
+:root :is([class^="layerContainer_"] [role="listbox"], [class^="selectDropdown_"]) {
+  border-radius: var(--ac-radius-card);
+}
+
+/* Full-screen layers. Discord fades the app out underneath them with an
+   inline opacity: 0, which left the glass nothing to show — keep it visible.
+   A full-screen layer that isn't a settings view stays one pane of glass. */
+:root [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]):not(#ac) {
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--ac-glass-sheet);
+}
+
+[class^="layers_"]:has(> [class^="layer_"]:not([class*="baseLayer_"])) > [class*="baseLayer_"] {
+  opacity: 1 !important;
+}
+
+/* Server and channel settings: a floating window, like the user settings
+   modal. The layer is only the dim; the settings view is the glass. The view
+   sits directly in the layer for channels but one wrapper deeper for servers,
+   hence descendant selectors and absolute centering. */
+:root [class^="layers_"] > [class^="layer_"]:has([class^="standardSidebarView_"]):not(#ac) {
+  background: var(--ac-scrim);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+:root [class^="layers_"] > [class^="layer_"] [class^="standardSidebarView_"] {
+  position: absolute;
+  inset: 0;
+  /* Sized to Discord's standard settings layout — 272px sidebar + 740px
+     content column + 16px scrollbar gutter — so there's no empty band on
+     the right and the window keeps one width across pages. */
+  width: min(1028px, 100% - 2 * 64px);
+  height: min(982px, 100% - 2 * 40px);
+  margin: auto;
+  border-radius: var(--ac-radius-pane);
+  overflow: hidden;
+  background: var(--ac-glass-popover);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  box-shadow: var(--ac-specular), var(--ac-shadow-float);
+}
+
+/* Discord fades the whole layer in and out with an inline opacity, and a
+   backdrop-filter shows nothing while an ancestor is translucent: the
+   window's blur only appeared once the fade had finished. So the layer
+   stays opaque and the fades move onto the window and the dim themselves.
+   The base layer's aria-hidden tells the phases apart: "true" from the
+   first frame of opening, "false" from the first frame of closing. */
+[class^="layers_"] > [class^="layer_"]:has([class^="standardSidebarView_"]) {
+  opacity: 1 !important;
+  animation: ac-dim-in 200ms ease-out both;
+}
+
+[class^="layers_"]:has(> [class*="baseLayer_"][aria-hidden="false"]) > [class^="layer_"]:has([class^="standardSidebarView_"]) {
+  animation: ac-dim-out 160ms ease-in both;
+}
+
+[class^="layers_"]:has(> [class*="baseLayer_"][aria-hidden="false"]) > [class^="layer_"] [class^="standardSidebarView_"] {
+  animation: ac-fade-out 160ms ease-in both;
+}
+
+@keyframes ac-dim-in {
+  from { background-color: transparent; }
+}
+
+@keyframes ac-dim-out {
+  to { background-color: transparent; }
+}
+
+@keyframes ac-fade-out {
+  to { opacity: 0; }
+}
+
+/* Popouts using Discord's "fade" animator (your own profile card) had the
+   same gap, for 80ms: the wrapper stays opaque and the card fades itself. */
+[class^="animator"][class*=" fade_"] {
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+[class^="animator"][class*=" fade_"] .user-profile-popout {
+  animation: ac-fade 120ms ease-out both;
+}
+
+/* Discord centers the sidebar across the whole screen; in a window it hugs
+   the left edge, set apart by a hairline as in the user settings. */
+:root [class^="standardSidebarView_"] > [class^="sidebarRegion_"] {
+  flex: 0 0 auto;
+  box-shadow: inset -1px 0 0 0 var(--ac-separator-soft);
+}
+
+/* The content region no longer stretches to Discord's 800px basis. */
+:root [class^="standardSidebarView_"] > [class^="contentRegion_"] {
+  flex: 1 1 auto;
+}
+
+/* Close button in the window's top-right corner, as in the user settings,
+   on every page variant (some lay it out in flow, some fixed). Fixed here:
+   the window's backdrop-filter makes it the containing block, so the
+   offsets are from the window's edges. Its old column takes no room. */
+:root [class^="standardSidebarView_"] [class^="toolsContainer_"] {
+  flex: 0 0 0px;
+  width: 0;
+  margin: 0;
+}
+
+:root [class^="standardSidebarView_"] [class^="tools_"] {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  left: auto;
+}
+
+/* Dim behind modals: lighter than Discord's, so the glass still reads. */
+:root [class^="scrim_"] {
+  background: var(--ac-scrim);
+}
+
+/* Media viewer: the app recedes behind a dark, frosted backdrop, like
+   Quick Look — the image is the only thing in focus. */
+:root [class^="scrim_"][class*="lightbox_"] {
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(120%);
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(120%);
+}
+
+:root [class^="carouselModal_"] [class^="actionButtons_"]:not(#ac) {
+  border-radius: var(--ac-radius-pill);
+  box-shadow: var(--ac-specular), var(--ac-shadow-control);
+}
+
+/* ── Modals ──────────────────────────────────────────────────────────── */
+
+/* Settings: a hairline between the sidebar and the content, like System
+   Settings. The modal is already glass — no second layer for the sidebar. */
+:root [class^="outerContainer_"] > [class^="container_"] aside[class^="sidebar_"] {
+  box-shadow: inset -1px 0 0 0 var(--ac-separator-soft);
+}
+
+/* ── Menus ───────────────────────────────────────────────────────────── */
+
+/* The glass sits on a ::before rather than on the menu itself. Discord
+   renders a submenu inside its parent menu, and an element with a
+   backdrop-filter is the backdrop root of its descendants: the submenu's
+   blur could only see the parent's own pixels, so the page showed through
+   it sharp, behind a tint. */
+:root [role="menu"]:not(#ac) {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--ac-specular-strong), var(--ac-shadow-float);
+}
+
+:root [role="menu"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  /* Frost, a touch brighter at the top: light falls on the glass from above. */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 45%),
+    var(--ac-glass-menu);
+  -webkit-backdrop-filter: blur(var(--ac-glass-menu-blur)) saturate(var(--ac-glass-saturate)) brightness(var(--ac-glass-menu-dim));
+  backdrop-filter: blur(var(--ac-glass-menu-blur)) saturate(var(--ac-glass-saturate)) brightness(var(--ac-glass-menu-dim));
+  pointer-events: none;
+}
+
+/* Full profile modal: Discord rounds its themed content at 18px with its own
+   1px gray border, inside our 24px modal — the two outlines drifted apart at
+   the corners. The content follows the modal's radius; the rim is the
+   glass's specular edge, so Discord's border goes. */
+:root .user-profile-modal-v2:not(#ac) {
+  border: none;
+}
+
+:root :is(
+  [class^="layoutContainer_"]:has(> .user-profile-modal-v2),
+  .user-profile-modal-v2,
+  .user-profile-modal-v2 > [class^="inner_"],
+  .user-profile-modal-v2 > [class^="inner_"] > :is([class^="backgroundImage_"], [class^="scrim_"])
+):not(#ac) {
+  border-radius: var(--ac-radius-pane);
+}
+
+/* ── Tooltips ────────────────────────────────────────────────────────── */
+
+:root [role="tooltip"]:not(#ac) {
+  box-shadow: var(--ac-specular), var(--ac-shadow-control);
+}
+
+/* ── Emoji picker ────────────────────────────────────────────────────── */
+
+/* Sticky category headers: clear now, so they blur the emoji scrolling
+   beneath instead of letting it show through the label. The picker is
+   itself a backdrop root, so this blurs its own content only. */
+:root [class*="expressionPickerPositionLayer_"] [class^="wrapper_"][class*="header_"] {
+  background: rgba(40, 40, 44, 0.4);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+/* ── Search ──────────────────────────────────────────────────────────── */
+
+/* Discord fades long filter labels with a mask painted in
+   --background-surface-high, which is clear inside the glass — the labels
+   vanished. Same fade in black: a mask only reads alpha. */
+:root [class^="groupWrapper_"] [class^="item_"] {
+  -webkit-mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+}
+
+/* ── Message actions ─────────────────────────────────────────────────── */
+
+:root [class^="buttonsInner_"]:not(#ac) {
+  padding: 2px;
+  border-radius: var(--ac-radius-pill);
+  box-shadow: var(--ac-specular), var(--ac-shadow-control);
+}
+
+:root [class^="buttonsInner_"] [class^="hoverBarButton_"] {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* ── Autocomplete ────────────────────────────────────────────────────── */
+
+/* A suggestion list, like a menu: same frosted material. (Its blur reaches
+   the chat now that the composer's glass is on a ::before.) */
+:root [class^="autocomplete_"]:not(#ac) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 45%),
+    var(--ac-glass-menu);
+  -webkit-backdrop-filter: blur(var(--ac-glass-menu-blur)) saturate(var(--ac-glass-saturate)) brightness(var(--ac-glass-menu-dim));
+  backdrop-filter: blur(var(--ac-glass-menu-blur)) saturate(var(--ac-glass-saturate)) brightness(var(--ac-glass-menu-dim));
+  box-shadow: var(--ac-specular-strong), var(--ac-shadow-float);
+}
+
+/* ── Pills over the chat ─────────────────────────────────────────────── */
+
+:root :is([class^="newMessagesPill_"], [class^="jumpToPresentButton_"]) {
+  border-radius: var(--ac-radius-pill);
+}

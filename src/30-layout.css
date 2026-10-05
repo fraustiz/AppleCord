@@ -1,0 +1,152 @@
+/*
+ * Layout, the way an Apple app is built:
+ *
+ *   content layer   → chat, members, pages: full-bleed on the system background
+ *   navigation layer→ Liquid Glass floating above it
+ *       sidebar       one glass pane, inset from the window, holding the
+ *                     server rail and the channel list (macOS Tahoe sidebar)
+ *       user panel    a glass plate inside the sidebar, concentric corners
+ *       composer      a floating glass plate the messages scroll beneath
+ *
+ * Selectors match class-name prefixes, scoped by structure, so they survive
+ * Discord's hash changes as long as the component names stay.
+ */
+
+[class^="base_"] > [class^="bar_"] {
+  background: transparent;
+}
+
+/* ── Sidebar pane ────────────────────────────────────────────────────── */
+
+/* No backdrop-filter here: the only thing behind the pane is the plain
+   system background, so a blur would change nothing on screen — and a
+   blurred layer holding the user panel's videos flickers in Chromium. */
+[class^="base_"] > [class^="content_"] > [class^="sidebar_"] {
+  margin: 0 0 var(--ac-inset) var(--ac-inset);
+  border-radius: var(--ac-radius-pane);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--ac-glass-sidebar);
+  box-shadow: var(--ac-specular), var(--ac-shadow-pane);
+}
+
+/* Everything inside the pane is clear: one material, not glass on glass. */
+[class^="sidebar_"] > nav[class*="guilds_"],
+[class^="sidebar_"] > [class^="sidebarList_"],
+[class^="sidebarList_"] > nav,
+nav[class^="privateChannels_"] [class^="scroller_"] {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+[class^="sidebarList_"] header {
+  background: transparent;
+}
+
+/* Hairline between the server rail and the channel list. Drawn on the rail's
+   right edge: the server banner at the top of the list would cover it. */
+[class^="sidebar_"] > nav[class*="guilds_"] {
+  box-shadow: inset -1px 0 0 0 var(--ac-separator-soft);
+}
+
+/* The rail starts flush with the pane's top edge, so the first icon was
+   clipped by the rounded corner. Give it the same 16px above as it has on
+   each side ((72px rail − 40px icon) / 2) — set on the tree, since Discord
+   writes the scroller's padding inline. */
+nav[class*="guilds_"] > [class^="tree_"] {
+  padding-top: 16px;
+}
+
+/* Home button: the Apple logo instead of Discord's. Drawn as a mask so it
+   takes the button's own color at rest, on hover and when selected. */
+[data-list-item-id="guildsnav___home"] [class^="childWrapper_"] > svg {
+  display: none;
+}
+
+[data-list-item-id="guildsnav___home"] [class^="childWrapper_"]::after {
+  content: "";
+  width: 22px;
+  height: 22px;
+  background-color: currentColor;
+  -webkit-mask: var(--ac-home-glyph) center / contain no-repeat;
+  mask: var(--ac-home-glyph) center / contain no-repeat;
+}
+
+[class^="sidebarResizeHandle_"] {
+  background: transparent;
+}
+
+/* ── User panel ──────────────────────────────────────────────────────── */
+
+/* Discord positions it absolutely at the bottom of the sidebar, 8px in.
+   The glass lives on a ::before behind the content rather than on the
+   panel itself: the panel holds looping videos (quest promo, nameplate),
+   and a backdrop-filter layer with live video inside flickers in Chromium. */
+section[class^="panels_"] {
+  border-radius: var(--ac-radius-plate);
+  isolation: isolate;
+  background: transparent;
+  box-shadow: var(--ac-specular-strong), var(--ac-shadow-float);
+  border: none;
+}
+
+section[class^="panels_"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ac-glass-plate);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  pointer-events: none;
+}
+
+/* The account row carries the nameplate video, which runs a pixel past the
+   panel; clip it to the panel's bottom corners. The panel itself can't
+   clip: the quest card expands above it. */
+section[class^="panels_"] > [class^="container_"]:last-child {
+  overflow: hidden;
+  border-radius: 0 0 var(--ac-radius-plate) var(--ac-radius-plate);
+}
+
+/* ── Content layer ───────────────────────────────────────────────────── */
+
+[class^="base_"] > [class^="content_"] > [class^="page_"],
+[class^="page_"] :is(
+  [class^="chat_"],
+  main[class^="chatContent_"],
+  main[class^="container_"],
+  [class^="tabBody_"],
+  [class^="peopleColumn_"],
+  [class^="nowPlayingColumn_"]
+) {
+  background: transparent;
+}
+
+/* Page header: no divider. Nothing scrolls under it, so there is no edge
+   to mark — spacing does the separating. */
+[class^="page_"] section:has(> [class^="upperContainer_"]),
+[class^="page_"] [class^="subtitleContainer_"] {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Members list: same content layer, set apart by a hairline. */
+[class^="page_"] [class^="container_"]:has(> aside[class^="membersWrap_"]) {
+  background: transparent;
+  box-shadow: inset 1px 0 0 0 var(--ac-separator-soft);
+}
+
+aside[class^="membersWrap_"],
+aside[class^="membersWrap_"] [class^="members_"] {
+  background: transparent;
+}
+
+/* Discord fades the last message into the old opaque composer bar. */
+[class^="chatGradient_"] {
+  display: none;
+}

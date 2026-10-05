@@ -1,0 +1,11 @@
+{
+  "name": "applecord",
+  "version": "0.1.0",
+  "description": "Thème Vencord/Equicord pour Discord en Liquid Glass, façon iOS 27.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs --watch"
+  }
+}

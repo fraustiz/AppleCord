@@ -1,0 +1,62 @@
+/*
+ * Accessibility. Three independent signals, each with a gentler equivalent
+ * rather than "nothing": reduced motion keeps cross-fades, reduced
+ * transparency keeps the hierarchy with solid materials.
+ */
+
+/* System setting, and Discord's own "Reduce motion" (.reduce-motion on <html>) */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ac-spring-smooth: ease;
+    --ac-spring-bouncy: ease;
+    --ac-spring-smooth-duration: 180ms;
+    --ac-spring-bouncy-duration: 120ms;
+    --ac-press-scale: 1;
+  }
+
+  [class^="menu_"][role="menu"] {
+    animation-name: none;
+  }
+}
+
+:root.reduce-motion {
+  --ac-spring-smooth: ease;
+  --ac-spring-bouncy: ease;
+  --ac-spring-smooth-duration: 180ms;
+  --ac-spring-bouncy-duration: 120ms;
+  --ac-press-scale: 1;
+}
+
+:root.reduce-motion [class^="menu_"][role="menu"] {
+  animation-name: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --ac-glass-blur: 0px;
+    --ac-glass-sidebar: var(--ac-bg-secondary);
+    --ac-glass-plate: var(--ac-bg-tertiary);
+    --ac-glass-popover: var(--ac-bg-tertiary);
+    --ac-glass-menu: var(--ac-bg-tertiary);
+    --ac-glass-menu-blur: 0px;
+    --ac-glass-menu-dim: 1;
+    --ac-glass-sheet: var(--ac-bg-secondary);
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --ac-label-secondary: rgba(235, 235, 245, 0.84);
+    --ac-label-tertiary: rgba(235, 235, 245, 0.6);
+    --ac-separator: rgba(160, 160, 168, 0.9);
+    --ac-separator-soft: rgba(160, 160, 168, 0.6);
+    --ac-glass-sidebar: rgba(28, 28, 30, 0.96);
+    --ac-glass-plate: rgba(44, 44, 46, 0.96);
+    --ac-glass-popover: rgba(44, 44, 46, 0.97);
+    --ac-glass-menu: rgba(44, 44, 46, 0.97);
+    --ac-glass-menu-dim: 1;
+    --ac-glass-sheet: rgba(22, 22, 24, 0.96);
+    --ac-specular: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    --ac-specular-strong: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  }
+}

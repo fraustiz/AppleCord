@@ -1,0 +1,199 @@
+/*
+ * Discord's design tokens, remapped to Liquid Glass.
+ *
+ * Discord defines its variables on .theme-dark/.theme-darker/.theme-midnight,
+ * both on <html> and on nested layers. Prefixing with :root bumps specificity
+ * to (0,2,0) so we win over lazy-loaded chunks without !important.
+ */
+
+:root:is(.theme-dark, .theme-darker, .theme-midnight),
+:root :is(.theme-dark, .theme-darker, .theme-midnight) {
+  /* Fonts */
+  --font-primary: var(--ac-font);
+  --font-display: var(--ac-font-display);
+  --font-headline: var(--ac-font-display);
+  --font-code: var(--ac-font-mono);
+  --font-display-marketing: var(--ac-font-display);
+  --font-display-marketing-header: var(--ac-font-display);
+
+  /* Surfaces — solid system backgrounds by default. Glass is applied
+     explicitly, with its blur, by the layout and component modules, so
+     nothing ever ends up translucent without a backdrop blur. */
+  --app-frame-background: var(--ac-bg);
+  --app-frame-border: transparent;
+  --background-base-lowest: var(--ac-bg);
+  --background-base-lower: var(--ac-bg);
+  --background-base-low: var(--ac-bg);
+  --chat-background: var(--ac-bg);
+  --chat-background-default: var(--ac-bg);
+  --chat-border: var(--ac-separator-soft);
+  --background-secondary-alt: var(--ac-bg-secondary);
+
+  --background-surface-high: var(--ac-bg-secondary);
+  --background-surface-higher: var(--ac-bg-tertiary);
+  --background-surface-highest: #3a3a3c;
+  --bg-surface-raised: var(--ac-bg-secondary);
+  --modal-background: var(--ac-bg-secondary);
+  --modal-footer-background: var(--ac-bg-secondary);
+  --card-background-default: var(--ac-fill-quaternary);
+  --card-secondary-bg: var(--ac-fill-quaternary);
+  --card-border-default: var(--ac-separator-soft);
+  --background-scrim: rgba(0, 0, 0, 0.5);
+
+  /* Overlays for hover / selected states */
+  --background-mod-subtle: var(--ac-fill-quaternary);
+  --background-mod-normal: var(--ac-fill-tertiary);
+  --background-mod-strong: var(--ac-fill-secondary);
+  --background-mod-muted: rgba(116, 116, 128, 0.1);
+  --interactive-background-hover: var(--ac-fill-quaternary);
+  --interactive-background-active: var(--ac-fill-tertiary);
+  --interactive-background-selected: var(--ac-fill-tertiary);
+  --message-background-hover: rgba(116, 116, 128, 0.1);
+
+  /* Inputs: borderless fills, tint ring on focus */
+  --input-background-default: var(--ac-fill-tertiary);
+  --input-border-default: transparent;
+  --input-border-hover: transparent;
+  --input-border-active: var(--ac-accent);
+  --channeltextarea-background: transparent;
+
+  /* Labels */
+  --text-strong: var(--ac-label);
+  --text-default: var(--ac-label);
+  --text-subtle: var(--ac-label-secondary);
+  --text-muted: var(--ac-label-tertiary);
+  --chat-text-muted: var(--ac-label-tertiary);
+  --channels-default: var(--ac-label-secondary);
+  --text-link: var(--ac-accent-hover);
+  --text-brand: var(--ac-accent-hover);
+
+  --interactive-text-default: var(--ac-label-secondary);
+  --interactive-text-hover: var(--ac-label);
+  --interactive-text-active: var(--ac-label);
+  --interactive-icon-default: var(--ac-label-secondary);
+  --interactive-icon-hover: var(--ac-label);
+  --interactive-icon-active: var(--ac-label);
+  --interactive-muted: var(--ac-label-quaternary);
+
+  --icon-strong: var(--ac-label);
+  --icon-default: var(--ac-label-secondary);
+  --icon-subtle: var(--ac-label-tertiary);
+  --icon-muted: var(--ac-label-quaternary);
+  --icon-brand: var(--ac-accent);
+  --icon-link: var(--ac-accent-hover);
+
+  /* Brand → iOS accent. The primitives first, so every semantic token
+     derived from blurple follows. */
+  --brand-260: #8ec5ff;
+  --brand-300: #7ab8ff;
+  --brand-330: #64acff;
+  --brand-345: #58a6ff;
+  --brand-360: #4ca0ff;
+  --brand-400: #409cff;
+  --brand-430: #2e93ff;
+  --brand-460: #1a8bff;
+  --brand-500: var(--ac-accent);
+  --brand-530: #087be8;
+  --brand-560: #0771d6;
+  --brand-600: #0667c4;
+  --background-brand: var(--ac-accent);
+  --background-accent: var(--ac-accent);
+  --control-brand-foreground: var(--ac-accent-hover);
+  --control-brand-foreground-new: var(--ac-accent-hover);
+  --control-primary-background-default: var(--ac-accent);
+  --control-primary-background-hover: var(--ac-accent-hover);
+  --control-primary-background-active: var(--ac-accent);
+  --control-primary-border-default: transparent;
+  --control-primary-border-hover: transparent;
+  --control-primary-border-active: transparent;
+  --control-primary-text-default: var(--ac-on-accent);
+  --control-primary-text-hover: var(--ac-on-accent);
+  --control-primary-text-active: var(--ac-on-accent);
+  --control-secondary-background-default: var(--ac-fill-tertiary);
+  --control-secondary-background-hover: var(--ac-fill-secondary);
+  --control-secondary-background-active: var(--ac-fill);
+  /* Secondary buttons follow SwiftUI's .bordered style: gray fill, label in
+     the tint color. Filled tint is reserved for the primary action. */
+  --control-secondary-text-default: var(--ac-accent-hover);
+  --control-secondary-text-hover: var(--ac-accent-hover);
+  --control-secondary-text-active: var(--ac-accent-hover);
+  --control-secondary-border-default: transparent;
+  --control-secondary-border-hover: transparent;
+  --control-secondary-border-active: transparent;
+  --interactive-accent-background-default: var(--ac-accent);
+  --interactive-accent-background-hover: var(--ac-accent-hover);
+  --interactive-accent-background-active: var(--ac-accent);
+  --interactive-accent-background-selected: var(--ac-accent);
+
+  /* Selection controls: tint for radios and checkboxes, green for switches */
+  --radio-background-selected-default: var(--ac-accent);
+  --radio-background-selected-hover: var(--ac-accent-hover);
+  --radio-border-selected-default: var(--ac-accent);
+  --radio-border-selected-hover: var(--ac-accent-hover);
+  --radio-thumb-background-active: var(--ac-on-accent);
+  --checkbox-background-selected-default: var(--ac-accent);
+  --checkbox-background-selected-hover: var(--ac-accent-hover);
+  --checkbox-border-selected-default: var(--ac-accent);
+  --checkbox-border-selected-hover: var(--ac-accent-hover);
+  --checkbox-icon-active: var(--ac-on-accent);
+  --switch-background-default: var(--ac-fill);
+  --switch-background-hover: var(--ac-fill);
+  --switch-border-default: transparent;
+  --switch-border-hover: transparent;
+  --switch-background-selected-default: var(--ac-green);
+  --switch-background-selected-hover: var(--ac-green);
+  --switch-border-selected-default: transparent;
+  --switch-border-selected-hover: transparent;
+  --switch-thumb-background-default: #ffffff;
+  --switch-thumb-background-selected-default: #ffffff;
+  --togglebutton-background-selected: var(--ac-accent);
+  --togglebutton-background-selected-hover: var(--ac-accent-hover);
+  --togglebutton-background-selected-active: var(--ac-accent);
+  --togglebutton-border-selected: transparent;
+
+  /* Separators */
+  --border-muted: rgba(84, 84, 88, 0.2);
+  --border-subtle: var(--ac-separator-soft);
+  --border-normal: var(--ac-separator);
+  --border-strong: rgba(120, 120, 128, 0.7);
+  --border-focus: var(--ac-accent);
+
+  /* Status */
+  --status-online: var(--ac-green);
+  --status-positive: var(--ac-green);
+  --status-danger: var(--ac-red);
+  --status-warning: var(--ac-orange);
+  --text-feedback-positive: var(--ac-green);
+  --text-feedback-critical: var(--ac-red);
+  --text-feedback-warning: var(--ac-orange);
+  --text-feedback-info: var(--ac-accent-hover);
+  --icon-status-online: var(--ac-green);
+  --icon-status-dnd: var(--ac-red);
+  --icon-status-idle: var(--ac-yellow);
+
+  /* Mentions */
+  --mention-background: rgba(10, 132, 255, 0.22);
+  --mention-foreground: #8ec5ff;
+  --message-mentioned-background-default: rgba(255, 214, 10, 0.08);
+  --message-mentioned-background-hover: rgba(255, 214, 10, 0.12);
+  --message-highlight-background-default: rgba(10, 132, 255, 0.1);
+  --message-highlight-background-hover: rgba(10, 132, 255, 0.14);
+
+  /* Scrollbars — overlay style, like macOS */
+  --scrollbar-auto-thumb: var(--ac-fill);
+  --scrollbar-auto-track: transparent;
+  --scrollbar-thin-thumb: var(--ac-fill);
+  --scrollbar-thin-track: transparent;
+  --scrollbar-auto-scrollbar-color-thumb: var(--ac-fill);
+  --scrollbar-auto-scrollbar-color-track: transparent;
+
+  /* Radii — rounder, concentric */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-xxl: 28px;
+  --button-border-radius: var(--ac-radius-pill);
+  --button-border-radius-lg: var(--ac-radius-pill);
+}
