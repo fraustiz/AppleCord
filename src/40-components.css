@@ -228,30 +228,31 @@ li[class^="messageListItem_"] > [class^="message_"] {
 
 /* ── Menus ───────────────────────────────────────────────────────────── */
 
-/* Discord sizes menus to their content and insets items by 8px through the
-   inner scroller; adding padding here would truncate the labels. */
-[class^="menu_"][role="menu"] {
+/* Menus and their submenus (class submenu_…, hence [role]). Discord sizes
+   menus to their content and insets items by 8px through the inner
+   scroller; adding padding here would truncate the labels. */
+[role="menu"] {
   border-radius: var(--ac-radius-card);
 }
 
 /* Concentric: item radius = menu radius − the scroller's 8px inset. */
-[class^="menu_"][role="menu"] [role^="menuitem"] {
+[role="menu"] [role^="menuitem"] {
   border-radius: calc(var(--ac-radius-card) - 8px);
 }
 
 /* macOS menus highlight the focused item with the tint color. */
-[class^="menu_"][role="menu"] [role^="menuitem"][class*="focused_"]:not([class*="colorDanger_"]) {
+[role="menu"] [role^="menuitem"][class*="focused_"]:not([class*="colorDanger_"]) {
   background: var(--ac-accent);
   color: var(--ac-on-accent);
 }
 
-[class^="menu_"][role="menu"] [role^="menuitem"][class*="focused_"][class*="colorDanger_"] {
+[role="menu"] [role^="menuitem"][class*="focused_"][class*="colorDanger_"] {
   background: var(--ac-red);
   color: var(--ac-on-accent);
 }
 
 /* Gray separators vanish on the frost; Apple's are a faint light line. */
-[class^="menu_"][role="menu"] [role="separator"] {
+[role="menu"] [role="separator"] {
   border-color: rgba(255, 255, 255, 0.14);
 }
 

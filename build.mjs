@@ -17,6 +17,7 @@ const header = `/**
  * @author Jules
  * @description Discord en Liquid Glass, façon iOS 27. Matériaux translucides, ressorts Apple, typographie SF.
  * @version ${pkg.version}
+ * @source https://github.com/fraustiz/AppleCord
  */
 `;
 
