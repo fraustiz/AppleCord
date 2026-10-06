@@ -756,7 +756,12 @@ li[class^="messageListItem_"] > [class^="message_"] {
   color: var(--ac-on-accent);
 }
 
+/* Discord paints a focused danger item's label and icon with
+   --text-feedback-critical (red, meant for its faint red highlight); on the
+   solid red highlight they'd vanish, so turn that color white inside it. */
 [role="menu"] [role^="menuitem"][class*="focused_"][class*="colorDanger_"] {
+  --text-feedback-critical: var(--ac-on-accent);
+  --icon-feedback-critical: var(--ac-on-accent);
   background: var(--ac-red);
   color: var(--ac-on-accent);
 }
