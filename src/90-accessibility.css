@@ -12,6 +12,7 @@
     --ac-spring-smooth-duration: 180ms;
     --ac-spring-bouncy-duration: 120ms;
     --ac-press-scale: 1;
+    --ac-hover-grow: 1;
   }
 
   [class^="menu_"][role="menu"] {
@@ -25,6 +26,7 @@
   --ac-spring-smooth-duration: 180ms;
   --ac-spring-bouncy-duration: 120ms;
   --ac-press-scale: 1;
+  --ac-hover-grow: 1;
 }
 
 :root.reduce-motion [class^="menu_"][role="menu"] {

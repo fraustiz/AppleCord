@@ -36,6 +36,28 @@
   transition-timing-function: ease-out;
 }
 
+/* Quick reactions: the emoji under the pointer swells on a spring, like
+   the Dock and the tapback picker, and the circle gives way on press. */
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]) {
+  transition:
+    scale var(--ac-spring-bouncy-duration) var(--ac-spring-bouncy),
+    background-color 120ms ease;
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"] [class*="icon_"] {
+  transition: scale var(--ac-spring-bouncy-duration) var(--ac-spring-bouncy);
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:hover [class*="icon_"] {
+  scale: var(--ac-hover-grow);
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]):active {
+  scale: var(--ac-press-scale);
+  transition-duration: 80ms;
+  transition-timing-function: ease-out;
+}
+
 /* ── Materialize ─────────────────────────────────────────────────────── */
 
 @keyframes ac-pop {

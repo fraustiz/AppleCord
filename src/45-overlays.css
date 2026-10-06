@@ -24,6 +24,9 @@
      reaction") is the emoji picker on its own, outside that tabbed wrapper */
   [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
   [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]),
+  /* App launcher (the composer's apps button) */
+  [class^="drawerSizingWrapper_"] > [class^="contentWrapper_"],
+  [class^="contentWrapper_"]:has(> [class^="slideContent_"]),
   /* Floating controls: message actions, media viewer toolbar */
   [class^="buttonsInner_"],
   [class^="carouselModal_"] [class^="actionButtons_"],
@@ -72,6 +75,8 @@
   [class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]),
   [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
   [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]),
+  [class^="drawerSizingWrapper_"] > [class^="contentWrapper_"],
+  [class^="contentWrapper_"]:has(> [class^="slideContent_"]),
   [class^="autocomplete_"]
 ) {
   border-radius: var(--ac-radius-popover);
@@ -300,6 +305,19 @@
   background: rgba(40, 40, 44, 0.4);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
+}
+
+/* ── App launcher ────────────────────────────────────────────────────── */
+
+/* Its app list is an inset-grouped card in Discord's raised surface color,
+   which the glass would clear entirely: keep the card as a translucent fill,
+   like a grouped list on a sheet. */
+:root :is(
+  [class^="drawerSizingWrapper_"] > [class^="contentWrapper_"],
+  [class^="contentWrapper_"]:has(> [class^="slideContent_"])
+):not(#ac) {
+  --background-surface-high: var(--ac-fill-quaternary);
+  --bg-surface-raised: var(--ac-fill-quaternary);
 }
 
 /* ── Search ──────────────────────────────────────────────────────────── */

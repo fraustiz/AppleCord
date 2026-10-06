@@ -103,6 +103,7 @@
 
   /* Motion */
   --ac-press-scale: 0.96;
+  --ac-hover-grow: 1.15; /* an emoji swelling under the pointer, Dock-like */
 
   /* Checkmark for selected menu items (SF Symbols' "checkmark" weight). */
   --ac-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
@@ -818,10 +819,26 @@ li[class^="messageListItem_"] > [class^="message_"] {
   color: var(--ac-on-accent);
 }
 
-/* Quick reactions at the top of a message's menu: round, like the tapback
-   bubbles in Messages, rather than 8px squares. */
-[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class^="icon_"]) {
+/* Quick reactions at the top of a message's menu, redrawn as the tapback
+   row in Messages: no gray tiles — the emoji sit bare on the glass, larger,
+   and a circle of light comes up under the one you point at. (Motion in
+   50-motion.css.) */
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]) {
   border-radius: 50%;
+  background: transparent;
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]):hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]):active {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"] [class*="icon_"] {
+  width: 28px;
+  height: 28px;
 }
 
 /* Gray separators vanish on the frost; Apple's are a faint light line. */
@@ -871,6 +888,28 @@ li[class^="messageListItem_"] > [class^="message_"] {
   border-radius: var(--ac-radius-card);
 }
 
+/* Roles: Finder-style tags rather than outlined boxes — a filled capsule
+   tinted with the role's color (Discord sets it inline as
+   --custom-role-label-color), gray for a role without one, and the dot at
+   full strength. Translucent, so it sits on glass as well as on black. */
+:root :is([class^="role_"], [class*=" role_"]):not(#ac) {
+  border: none;
+  border-radius: var(--ac-radius-pill);
+  padding: 4px 10px 4px 8px;
+  background-color: color-mix(in oklch, var(--custom-role-label-color, rgb(120 120 128)) 24%, transparent);
+  color: var(--ac-label);
+  font-weight: 500;
+}
+
+:root :is([class^="role_"], [class*=" role_"]):not(#ac):hover {
+  background-color: color-mix(in oklch, var(--custom-role-label-color, rgb(120 120 128)) 36%, transparent);
+}
+
+:root [class^="roleColor_"]:not(#ac) {
+  border: none;
+  margin-inline-end: 6px;
+}
+
 /* ── 45-overlays.css ─────────────────────────────────────────────────── */
 /*
  * Overlays: everything that opens above the base Discord UI is Liquid Glass.
@@ -886,7 +925,7 @@ li[class^="messageListItem_"] > [class^="message_"] {
    one id's worth, so this beats any class-based Discord rule without
    !important — and an override below only needs its own selector plus
    :not(#ac) to win, without repeating the list. */
-:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac) {
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="drawerSizingWrapper_"] > [class^="contentWrapper_"], [class^="contentWrapper_"]:has(> [class^="slideContent_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac) {
   border: none;
   background: var(--ac-glass-popover);
   -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
@@ -897,8 +936,8 @@ li[class^="messageListItem_"] > [class^="message_"] {
 /* Inside the glass, Discord's own surface colors go clear so the material
    reads through; nested cards become translucent fills, not opaque grays.
    Nested .theme-dark elements re-declare the palette, so they're covered too. */
-:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac),
-:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))) :is(.theme-dark, .theme-darker, .theme-midnight):not(#ac) {
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="drawerSizingWrapper_"] > [class^="contentWrapper_"], [class^="contentWrapper_"]:has(> [class^="slideContent_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac),
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="drawerSizingWrapper_"] > [class^="contentWrapper_"], [class^="contentWrapper_"]:has(> [class^="slideContent_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))) :is(.theme-dark, .theme-darker, .theme-midnight):not(#ac) {
   --background-base-lowest: transparent;
   --background-base-lower: transparent;
   --background-base-low: transparent;
@@ -920,6 +959,8 @@ li[class^="messageListItem_"] > [class^="message_"] {
   [class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]),
   [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
   [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]),
+  [class^="drawerSizingWrapper_"] > [class^="contentWrapper_"],
+  [class^="contentWrapper_"]:has(> [class^="slideContent_"]),
   [class^="autocomplete_"]
 ) {
   border-radius: var(--ac-radius-popover);
@@ -1150,6 +1191,19 @@ li[class^="messageListItem_"] > [class^="message_"] {
   backdrop-filter: blur(16px);
 }
 
+/* ── App launcher ────────────────────────────────────────────────────── */
+
+/* Its app list is an inset-grouped card in Discord's raised surface color,
+   which the glass would clear entirely: keep the card as a translucent fill,
+   like a grouped list on a sheet. */
+:root :is(
+  [class^="drawerSizingWrapper_"] > [class^="contentWrapper_"],
+  [class^="contentWrapper_"]:has(> [class^="slideContent_"])
+):not(#ac) {
+  --background-surface-high: var(--ac-fill-quaternary);
+  --bg-surface-raised: var(--ac-fill-quaternary);
+}
+
 /* ── Search ──────────────────────────────────────────────────────────── */
 
 /* Discord fades long filter labels with a mask painted in
@@ -1230,6 +1284,28 @@ li[class^="messageListItem_"] > [class^="message_"] {
   transition-timing-function: ease-out;
 }
 
+/* Quick reactions: the emoji under the pointer swells on a spring, like
+   the Dock and the tapback picker, and the circle gives way on press. */
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]) {
+  transition:
+    scale var(--ac-spring-bouncy-duration) var(--ac-spring-bouncy),
+    background-color 120ms ease;
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"] [class*="icon_"] {
+  transition: scale var(--ac-spring-bouncy-duration) var(--ac-spring-bouncy);
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:hover [class*="icon_"] {
+  scale: var(--ac-hover-grow);
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]):active {
+  scale: var(--ac-press-scale);
+  transition-duration: 80ms;
+  transition-timing-function: ease-out;
+}
+
 /* ── Materialize ─────────────────────────────────────────────────────── */
 
 @keyframes ac-pop {
@@ -1274,6 +1350,7 @@ li[class^="messageListItem_"] > [class^="message_"] {
     --ac-spring-smooth-duration: 180ms;
     --ac-spring-bouncy-duration: 120ms;
     --ac-press-scale: 1;
+    --ac-hover-grow: 1;
   }
 
   [class^="menu_"][role="menu"] {
@@ -1287,6 +1364,7 @@ li[class^="messageListItem_"] > [class^="message_"] {
   --ac-spring-smooth-duration: 180ms;
   --ac-spring-bouncy-duration: 120ms;
   --ac-press-scale: 1;
+  --ac-hover-grow: 1;
 }
 
 :root.reduce-motion [class^="menu_"][role="menu"] {

@@ -308,10 +308,26 @@ li[class^="messageListItem_"] > [class^="message_"] {
   color: var(--ac-on-accent);
 }
 
-/* Quick reactions at the top of a message's menu: round, like the tapback
-   bubbles in Messages, rather than 8px squares. */
-[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class^="icon_"]) {
+/* Quick reactions at the top of a message's menu, redrawn as the tapback
+   row in Messages: no gray tiles — the emoji sit bare on the glass, larger,
+   and a circle of light comes up under the one you point at. (Motion in
+   50-motion.css.) */
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]) {
   border-radius: 50%;
+  background: transparent;
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]):hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class*="icon_"]):active {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+[role="menu"] [class^="wrapper_"] > [class^="button_"] [class*="icon_"] {
+  width: 28px;
+  height: 28px;
 }
 
 /* Gray separators vanish on the frost; Apple's are a faint light line. */
@@ -359,4 +375,26 @@ li[class^="messageListItem_"] > [class^="message_"] {
 .user-profile-popout [class*="menuOverlay_"] {
   background: var(--ac-fill-quaternary);
   border-radius: var(--ac-radius-card);
+}
+
+/* Roles: Finder-style tags rather than outlined boxes — a filled capsule
+   tinted with the role's color (Discord sets it inline as
+   --custom-role-label-color), gray for a role without one, and the dot at
+   full strength. Translucent, so it sits on glass as well as on black. */
+:root :is([class^="role_"], [class*=" role_"]):not(#ac) {
+  border: none;
+  border-radius: var(--ac-radius-pill);
+  padding: 4px 10px 4px 8px;
+  background-color: color-mix(in oklch, var(--custom-role-label-color, rgb(120 120 128)) 24%, transparent);
+  color: var(--ac-label);
+  font-weight: 500;
+}
+
+:root :is([class^="role_"], [class*=" role_"]):not(#ac):hover {
+  background-color: color-mix(in oklch, var(--custom-role-label-color, rgb(120 120 128)) 36%, transparent);
+}
+
+:root [class^="roleColor_"]:not(#ac) {
+  border: none;
+  margin-inline-end: 6px;
 }
