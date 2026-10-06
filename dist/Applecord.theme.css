@@ -670,6 +670,58 @@ button[class^="button_"][class*=" md_"] [class*="text-md/"] {
   color: #ffffff;
 }
 
+/* Call controls, FaceTime-style. Discord groups them in 12px boxes with a
+   gray outline; here each group is a capsule of glass over the video, and
+   the 40px buttons in it are circles, concentric with it 4px in. */
+:root [class^="callContainer_"] [class^="buttonSection_"] {
+  border: none;
+  border-radius: var(--ac-radius-pill);
+  background: var(--ac-glass-plate);
+  -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
+  box-shadow: var(--ac-specular), var(--ac-shadow-control);
+}
+
+:root [class^="callContainer_"] [class*="centerButton_"] {
+  border-radius: var(--ac-radius-pill);
+}
+
+/* A button and its options caret read as one split capsule. */
+:root [class^="callContainer_"] [class*="attachedButton_"] {
+  border-radius: var(--ac-radius-pill) 0 0 var(--ac-radius-pill);
+}
+
+:root [class^="callContainer_"] [class*="contextMenuNub_"][class*="attachedCaret_"] {
+  border-radius: 0 var(--ac-radius-pill) var(--ac-radius-pill) 0;
+}
+
+/* Muted or deafened: Discord tints the button a faint red under a red
+   glyph — red on red. FaceTime shows an engaged toggle as a white button
+   with a dark glyph; the slashed icon says which state it is. */
+:root [class^="callContainer_"] [class*="colorable_"][class*="redGlow_"]:not(#ac) {
+  background: var(--ac-label);
+  color: #1c1c1e;
+}
+
+:root [class^="callContainer_"] [class*="colorable_"][class*="redGlow_"]:not(#ac):hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+:root [class^="callContainer_"] [class*="colorable_"][class*="redGlow_"]:not(#ac) [class*="centerIcon_"] {
+  color: inherit;
+}
+
+/* Leaving is FaceTime's red end-call capsule. */
+:root [class^="callContainer_"] [class*="colorable_"][class*="disconnect_"]:not(#ac) {
+  border-radius: var(--ac-radius-pill);
+  background: var(--ac-red);
+  color: #ffffff;
+}
+
+:root [class^="callContainer_"] [class*="colorable_"][class*="disconnect_"]:not(#ac):hover {
+  background: color-mix(in srgb, var(--ac-red) 85%, #ffffff);
+}
+
 /* ── Store (Nitro home, Shop) ────────────────────────────────────────── */
 
 /* App Store treatment: the system background instead of the purple
@@ -766,6 +818,12 @@ li[class^="messageListItem_"] > [class^="message_"] {
   color: var(--ac-on-accent);
 }
 
+/* Quick reactions at the top of a message's menu: round, like the tapback
+   bubbles in Messages, rather than 8px squares. */
+[role="menu"] [class^="wrapper_"] > [class^="button_"]:has([class^="icon_"]) {
+  border-radius: 50%;
+}
+
 /* Gray separators vanish on the frost; Apple's are a faint light line. */
 [role="menu"] [role="separator"] {
   border-color: rgba(255, 255, 255, 0.14);
@@ -828,7 +886,7 @@ li[class^="messageListItem_"] > [class^="message_"] {
    one id's worth, so this beats any class-based Discord rule without
    !important — and an override below only needs its own selector plus
    :not(#ac) to win, without repeating the list. */
-:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac) {
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac) {
   border: none;
   background: var(--ac-glass-popover);
   -webkit-backdrop-filter: blur(var(--ac-glass-blur)) saturate(var(--ac-glass-saturate));
@@ -839,8 +897,8 @@ li[class^="messageListItem_"] > [class^="message_"] {
 /* Inside the glass, Discord's own surface colors go clear so the material
    reads through; nested cards become translucent fills, not opaque grays.
    Nested .theme-dark elements re-declare the palette, so they're covered too. */
-:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac),
-:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))) :is(.theme-dark, .theme-darker, .theme-midnight):not(#ac) {
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))):not(#ac),
+:root :where(:is([class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]), .user-profile-popout, [class^="outerContainer_"] > [class^="container_"], [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]), [role="dialog"][class^="root_"], [role="menu"], [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *), [class^="selectDropdown_"], [role="tooltip"], [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"], [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]), [class^="buttonsInner_"], [class^="carouselModal_"] [class^="actionButtons_"], [class^="autocomplete_"], [class^="toast_"], [class^="newMessagesPill_"], [class^="jumpToPresentButton_"], [class^="layers_"] > [class^="layer_"]:not([class*="baseLayer_"]))) :is(.theme-dark, .theme-darker, .theme-midnight):not(#ac) {
   --background-base-lowest: transparent;
   --background-base-lower: transparent;
   --background-base-low: transparent;
@@ -861,6 +919,7 @@ li[class^="messageListItem_"] > [class^="message_"] {
 :root :is(
   [class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]),
   [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
+  [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]),
   [class^="autocomplete_"]
 ) {
   border-radius: var(--ac-radius-popover);
@@ -1070,10 +1129,22 @@ li[class^="messageListItem_"] > [class^="message_"] {
 
 /* ── Emoji picker ────────────────────────────────────────────────────── */
 
+/* The glass is the picker's wrapper; the picker itself drops its card
+   shadow. In the reaction picker the search header sits above the grid
+   rather than inside it, and its buttons make it wider than the grid's
+   fixed 498px — the grid stretches to match, so the two read as one pane. */
+:root [class^="emojiPicker_"] {
+  box-shadow: none;
+}
+
+:root [class^="wrapper_"]:has(> [class^="header_"] + [class^="emojiPicker_"]) > [class^="emojiPicker_"] {
+  width: 100%;
+}
+
 /* Sticky category headers: clear now, so they blur the emoji scrolling
    beneath instead of letting it show through the label. The picker is
    itself a backdrop root, so this blurs its own content only. */
-:root [class*="expressionPickerPositionLayer_"] [class^="wrapper_"][class*="header_"] {
+:root :is([class*="expressionPickerPositionLayer_"], [class^="emojiPicker_"]) [class^="wrapper_"][class*="header_"] {
   background: rgba(40, 40, 44, 0.4);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);

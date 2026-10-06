@@ -20,8 +20,10 @@
   [class^="layerContainer_"] [role="listbox"]:not([class^="outerContainer_"] *),
   [class^="selectDropdown_"],
   [role="tooltip"],
-  /* Emoji / GIF / sticker picker */
+  /* Emoji / GIF / sticker picker; the reaction picker (a message's "add
+     reaction") is the emoji picker on its own, outside that tabbed wrapper */
   [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
+  [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]),
   /* Floating controls: message actions, media viewer toolbar */
   [class^="buttonsInner_"],
   [class^="carouselModal_"] [class^="actionButtons_"],
@@ -69,6 +71,7 @@
 :root :is(
   [class^="layerContainer_"] [role="dialog"]:not([class]) > :not([class*="hiddenVisually_"], [class^="outerContainer_"]),
   [class*="expressionPickerPositionLayer_"] [class^="contentWrapper_"],
+  [class^="wrapper_"]:not([class*="emojiPickerHasTabWrapper_"]):has(> [class^="emojiPicker_"]),
   [class^="autocomplete_"]
 ) {
   border-radius: var(--ac-radius-popover);
@@ -278,10 +281,22 @@
 
 /* ── Emoji picker ────────────────────────────────────────────────────── */
 
+/* The glass is the picker's wrapper; the picker itself drops its card
+   shadow. In the reaction picker the search header sits above the grid
+   rather than inside it, and its buttons make it wider than the grid's
+   fixed 498px — the grid stretches to match, so the two read as one pane. */
+:root [class^="emojiPicker_"] {
+  box-shadow: none;
+}
+
+:root [class^="wrapper_"]:has(> [class^="header_"] + [class^="emojiPicker_"]) > [class^="emojiPicker_"] {
+  width: 100%;
+}
+
 /* Sticky category headers: clear now, so they blur the emoji scrolling
    beneath instead of letting it show through the label. The picker is
    itself a backdrop root, so this blurs its own content only. */
-:root [class*="expressionPickerPositionLayer_"] [class^="wrapper_"][class*="header_"] {
+:root :is([class*="expressionPickerPositionLayer_"], [class^="emojiPicker_"]) [class^="wrapper_"][class*="header_"] {
   background: rgba(40, 40, 44, 0.4);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
