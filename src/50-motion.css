@@ -15,7 +15,8 @@
   [class^="toolbar_"] [role="button"],
   section[class^="panels_"] button,
   form[class^="form_"] [class^="buttons_"] [role="button"],
-  [data-list-item-id^="guildsnav___"]
+  [data-list-item-id^="guildsnav___"],
+  [class^="reaction_"]
 ) {
   /* Release springs back with a touch of bounce: the press was physical. */
   transition:
@@ -29,7 +30,8 @@
   [class^="toolbar_"] [role="button"],
   section[class^="panels_"] button,
   form[class^="form_"] [class^="buttons_"] [role="button"],
-  [data-list-item-id^="guildsnav___"]
+  [data-list-item-id^="guildsnav___"],
+  [class^="reaction_"]
 ):active:not(:disabled, [aria-disabled="true"]) {
   scale: var(--ac-press-scale);
   transition-duration: 80ms;

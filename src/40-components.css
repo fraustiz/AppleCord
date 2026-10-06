@@ -278,6 +278,37 @@ li[class^="messageListItem_"] > [class^="message_"] {
   border-radius: var(--ac-radius-card);
 }
 
+/* Reactions: capsules, like the tapback badges in Messages, rather than
+   8px boxes (colors in 10-palette.css). Counts in tabular figures so a
+   changing number doesn't jostle the row. */
+:root :is([class^="reaction_"], [class^="reactionBtn_"], [class^="burstGlow_"]) {
+  border-radius: var(--ac-radius-pill);
+}
+
+:root [class^="reaction_"] [class^="reactionInner_"] {
+  padding: 2px 10px 2px 8px;
+}
+
+/* Discord gives your own reaction no hover state. */
+:root [class^="reaction_"][class*="reactionMe_"]:hover {
+  background-color: var(--reaction-background-reacted-hover);
+}
+
+:root [class^="reactionCount_"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The add-reaction button, next to them: the same fill, no outline on
+   hover (Discord's sits on black and lights a white rim). */
+:root [class^="reactionBtn_"]:not(#ac) {
+  border-color: transparent;
+  background-color: var(--reaction-background-default);
+}
+
+:root [class^="reactionBtn_"]:not(#ac):hover {
+  background-color: var(--reaction-background-hover);
+}
+
 /* ── Menus ───────────────────────────────────────────────────────────── */
 
 /* Menus and their submenus (class submenu_…, hence [role]). Discord sizes

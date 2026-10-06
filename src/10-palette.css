@@ -179,6 +179,22 @@
   --message-highlight-background-default: rgba(10, 132, 255, 0.1);
   --message-highlight-background-hover: rgba(10, 132, 255, 0.14);
 
+  /* Reactions under messages: system fills with no outline; your own in
+     the tint color, as your tapback is blue in Messages. */
+  --reaction-background-default: var(--ac-fill-quaternary);
+  --reaction-background-hover: var(--ac-fill-tertiary);
+  --reaction-background-active: var(--ac-fill-secondary);
+  --reaction-border-default: transparent;
+  --reaction-border-hover: transparent;
+  --reaction-border-active: transparent;
+  --reaction-text-default: var(--ac-label-secondary);
+  --reaction-text-hover: var(--ac-label);
+  --reaction-text-active: var(--ac-label);
+  --reaction-background-reacted-default: rgba(10, 132, 255, 0.24);
+  --reaction-background-reacted-hover: rgba(10, 132, 255, 0.32);
+  --reaction-border-reacted-default: transparent;
+  --reaction-text-reacted-default: #8ec5ff;
+
   /* Scrollbars — overlay style, like macOS */
   --scrollbar-auto-thumb: var(--ac-fill);
   --scrollbar-auto-track: transparent;

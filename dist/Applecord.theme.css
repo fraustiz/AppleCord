@@ -295,6 +295,22 @@
   --message-highlight-background-default: rgba(10, 132, 255, 0.1);
   --message-highlight-background-hover: rgba(10, 132, 255, 0.14);
 
+  /* Reactions under messages: system fills with no outline; your own in
+     the tint color, as your tapback is blue in Messages. */
+  --reaction-background-default: var(--ac-fill-quaternary);
+  --reaction-background-hover: var(--ac-fill-tertiary);
+  --reaction-background-active: var(--ac-fill-secondary);
+  --reaction-border-default: transparent;
+  --reaction-border-hover: transparent;
+  --reaction-border-active: transparent;
+  --reaction-text-default: var(--ac-label-secondary);
+  --reaction-text-hover: var(--ac-label);
+  --reaction-text-active: var(--ac-label);
+  --reaction-background-reacted-default: rgba(10, 132, 255, 0.24);
+  --reaction-background-reacted-hover: rgba(10, 132, 255, 0.32);
+  --reaction-border-reacted-default: transparent;
+  --reaction-text-reacted-default: #8ec5ff;
+
   /* Scrollbars — overlay style, like macOS */
   --scrollbar-auto-thumb: var(--ac-fill);
   --scrollbar-auto-track: transparent;
@@ -789,6 +805,37 @@ li[class^="messageListItem_"] > [class^="message_"] {
   border-radius: var(--ac-radius-card);
 }
 
+/* Reactions: capsules, like the tapback badges in Messages, rather than
+   8px boxes (colors in 10-palette.css). Counts in tabular figures so a
+   changing number doesn't jostle the row. */
+:root :is([class^="reaction_"], [class^="reactionBtn_"], [class^="burstGlow_"]) {
+  border-radius: var(--ac-radius-pill);
+}
+
+:root [class^="reaction_"] [class^="reactionInner_"] {
+  padding: 2px 10px 2px 8px;
+}
+
+/* Discord gives your own reaction no hover state. */
+:root [class^="reaction_"][class*="reactionMe_"]:hover {
+  background-color: var(--reaction-background-reacted-hover);
+}
+
+:root [class^="reactionCount_"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The add-reaction button, next to them: the same fill, no outline on
+   hover (Discord's sits on black and lights a white rim). */
+:root [class^="reactionBtn_"]:not(#ac) {
+  border-color: transparent;
+  background-color: var(--reaction-background-default);
+}
+
+:root [class^="reactionBtn_"]:not(#ac):hover {
+  background-color: var(--reaction-background-hover);
+}
+
 /* ── Menus ───────────────────────────────────────────────────────────── */
 
 /* Menus and their submenus (class submenu_…, hence [role]). Discord sizes
@@ -1263,7 +1310,8 @@ li[class^="messageListItem_"] > [class^="message_"] {
   [class^="toolbar_"] [role="button"],
   section[class^="panels_"] button,
   form[class^="form_"] [class^="buttons_"] [role="button"],
-  [data-list-item-id^="guildsnav___"]
+  [data-list-item-id^="guildsnav___"],
+  [class^="reaction_"]
 ) {
   /* Release springs back with a touch of bounce: the press was physical. */
   transition:
@@ -1277,7 +1325,8 @@ li[class^="messageListItem_"] > [class^="message_"] {
   [class^="toolbar_"] [role="button"],
   section[class^="panels_"] button,
   form[class^="form_"] [class^="buttons_"] [role="button"],
-  [data-list-item-id^="guildsnav___"]
+  [data-list-item-id^="guildsnav___"],
+  [class^="reaction_"]
 ):active:not(:disabled, [aria-disabled="true"]) {
   scale: var(--ac-press-scale);
   transition-duration: 80ms;
