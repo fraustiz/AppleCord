@@ -1209,6 +1209,29 @@ li[class^="messageListItem_"] > [class^="message_"] {
   border-radius: var(--ac-radius-pane);
 }
 
+/* Profile editor's "save your changes" bar: on windows 1000px tall or more
+   Discord moves it below the modal (top: 100% + 24px), where the modal's
+   overflow: hidden clipped it away — there was no way to save. The modal
+   lets it out; its content is clipped to the rounded corners instead. */
+:root [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]):has(> [class*="pendingChangesToolbar_"]) {
+  overflow: visible;
+}
+
+:root [class^="focusLock_"] > :is([class^="root_"], [class*=" root_"]) > :has(~ [class*="pendingChangesToolbar_"]) {
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* The modal is the bar's backdrop root, so a blur would only see the
+   modal's own pixels — and nothing at all once the bar sits outside it.
+   An opaque capsule instead, like a floating toolbar. */
+:root [class*="pendingChangesToolbar_"] [class^="content_"] {
+  border: none;
+  border-radius: var(--ac-radius-pill);
+  background-color: var(--ac-bg-tertiary);
+  box-shadow: var(--ac-specular), var(--ac-shadow-float);
+}
+
 /* ── Tooltips ────────────────────────────────────────────────────────── */
 
 :root [role="tooltip"]:not(#ac) {
